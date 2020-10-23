@@ -7,7 +7,7 @@ using System.IO;
 using System.Net;
 
 
-namespace Petersilie.ManagementTools.NetworkMonitor
+namespace Petersilie.ManagementTools.NetworkMonitor.Header
 {
     /*  
     **   0           4           8            12         16           20          24           31
@@ -63,7 +63,7 @@ namespace Petersilie.ManagementTools.NetworkMonitor
 
         public byte[] Data { get; } = new byte[0];
 
-        public override HeaderVersion HeaderVersion { get { return HeaderVersion.IPv4; } }
+        public override IPVersion IPVersion { get { return IPVersion.IPv4; } }
 
         
         public IPv4Header(byte[] packet)
@@ -79,10 +79,10 @@ namespace Petersilie.ManagementTools.NetworkMonitor
                 **  |  Version  |    IHL    |           TOS         |             Total length            |
                 **  |-------------------------------------------------------------------------------------| 
                 */
-                b       = reader.ReadByte();
-                Version = HNIBBLE(b);
-                IHL     = LNIBBLE(b);
-                TOS     = reader.ReadByte();
+                b = reader.ReadByte();
+                Version = b.HighNibble();
+                IHL = b.LowNibble();
+                TOS = reader.ReadByte();
                 TotalLength = reader.ReadUInt16();
 
 

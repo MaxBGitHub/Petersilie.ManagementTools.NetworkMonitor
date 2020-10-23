@@ -8,23 +8,16 @@ using System.Net.NetworkInformation;
 using System.IO;
 
 
-namespace Petersilie.ManagementTools.NetworkMonitor
+namespace Petersilie.ManagementTools.NetworkMonitor.Header
 {
     public abstract class IPHeader
     {
-        internal static readonly Func<byte, byte> LNIBBLE = (b) 
-            => (byte)(b & 0x0f);
-
-        internal static readonly Func<byte, byte> HNIBBLE = (b) 
-            => (byte)((b >> 4) & 0xff);
-
-
         public IPAddress SourceAddress      { get; internal set; }
 
         public IPAddress DestinationAddress { get; internal set; }
 
 
-        public abstract HeaderVersion HeaderVersion { get; }
+        public abstract IPVersion IPVersion { get; }
 
 
         public static IPHeader Parse(byte[] packet)
@@ -32,7 +25,7 @@ namespace Petersilie.ManagementTools.NetworkMonitor
             using (var mem = new MemoryStream(packet))
             {
                 byte b = (byte)mem.ReadByte();
-                byte version = HNIBBLE(b);
+                byte version = b.HighNibble();
                 if (version == 4) {
                     return new IPv4Header(packet);
                 }
