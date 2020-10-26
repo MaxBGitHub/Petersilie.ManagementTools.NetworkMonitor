@@ -12,132 +12,50 @@ using Petersilie.ManagementTools.NetworkMonitor.Header;
 
 
 namespace Petersilie.ManagementTools.NetworkMonitor
-{
-    class debug
-    {
-        private static List<NetworkInterface> GetActiveInterface()
-        {
-            NetworkInterface[] interfaces = NetworkInterface.GetAllNetworkInterfaces();
-
-            var validInterfaces = new List<NetworkInterface>();
-            foreach (var netInt in interfaces)
-            {
-                bool isLoopBack = NetworkInterfaceType.Loopback == netInt.NetworkInterfaceType;
-                bool isTunnel = NetworkInterfaceType.Tunnel == netInt.NetworkInterfaceType;
-                bool isUp = OperationalStatus.Up == netInt.OperationalStatus;
-                bool isVirtualEth = netInt.Name.StartsWith("vEthernet");
-
-                if (!isLoopBack && !isTunnel && isUp && !isVirtualEth) {
-                    validInterfaces.Add(netInt);
-                }
-            }
-            return validInterfaces;
-        }
-
-
-        private static void HeaderReceived(object sender, IPHeaderEventArgs e)
-        {
-            if (e.Header == null) return;
-            var h = e.Header as IPv4Header;
-            if (h.Protocol == Protocol.UDP)
-            {                
-                if (h.Data.Length > 0) {
-                    var udpHeader = new UDPHeader(h.Data);
-                    if (udpHeader.Data.Length > 0)
-                    {
-                        //Console.WriteLine(
-                        //    h.SourceAddress + " - " +
-                        //    udpHeader.SourcePort + " - " +
-                        //    h.DestinationAddress + " - " +
-                        //    udpHeader.DestinationPort + " - " +
-                        //    $"UDP payload length: {udpHeader.Data.Length}");
-                    }                    
-                }
-            }
-            else if (h.Protocol == Protocol.TCP)
-            {
-                if (h.Data.Length > 0)
-                {
-                    var tcpHeader = new TCPHeader(h.Data);
-                    if (tcpHeader.Data.Length > 0)
-                    {
-                        //Console.WriteLine(
-                        //    h.SourceAddress + " - " +
-                        //    tcpHeader.SourcePort + " - " +
-                        //    h.DestinationAddress + " - " +
-                        //    tcpHeader.DestinationPort + " - " +
-                        //    $"TCP payload length: {tcpHeader.Data.Length}");
-                    }
-                }
-            }
-            else if (h.Protocol == Protocol.ICMP)
-            {
-                if (h.Data.Length > 0)
-                {
-                    var icmpHeader = new ICMPHeader(h.Data);
-                    Console.WriteLine(
-                        icmpHeader.Type + " - " +
-                        icmpHeader.Typename + " - " +
-                        icmpHeader.Code + " - " +
-                        icmpHeader.Checksum);
-                }
-            }
-            //Console.WriteLine(
-            //        h.IPVersion + " - " +
-            //        h.Protocol + " - " +
-            //        h.SourceAddress + " - " +
-            //        h.DestinationAddress + " - " +
-            //        h.Data.Length);
-        }
-
-
-        static void Main(string[] args)
-        {
-            var monitors = new List<NetworkMonitor>();
-            var interfaces = GetActiveInterface();
-            foreach (var netInterface in interfaces) {
-                var ipConfig = netInterface.GetIPProperties();
-                foreach (var uni in ipConfig.UnicastAddresses) {
-                    if (uni.Address.AddressFamily == AddressFamily.InterNetwork) {
-                        var mon = new NetworkMonitor(uni.Address);
-                        mon.IPv4HeaderReceived += HeaderReceived;
-                        mon.Begin();
-                        monitors.Add(mon);
-                    }
-                }
-            }
-            
-            while (true)
-            {
-            }
-        }
-    }
-
-    public class NetworkMonitor
+{    
+    public class NetworkMonitor : IDisposable
     {
         public IPAddress IPAddress { get; }
 
         public int Port { get; }
 
 
-        private event EventHandler<IPHeaderEventArgs> onIPv4HeaderReceived;
-        public event EventHandler<IPHeaderEventArgs> IPv4HeaderReceived
+        private event EventHandler<MonitorExceptionEventArgs> onError;
+        public event EventHandler<MonitorExceptionEventArgs> OnError
         {
             add {
-                onIPv4HeaderReceived += value;
+                onError += value;
             }
             remove {
-                onIPv4HeaderReceived -= value;
+                onError -= value;
             }
         }
 
-        protected virtual void OnIPv4HeaderReceived(IPHeaderEventArgs ipArgs)
+        protected virtual void OnErrorInternal(MonitorExceptionEventArgs e)
         {
-            onIPv4HeaderReceived?.Invoke(this, ipArgs);
+            onError?.Invoke(this, e);
+        }
+
+
+        private event EventHandler<IPHeaderEventArgs> onIPHeaderReceived;
+        public event EventHandler<IPHeaderEventArgs> IPHeaderReceived
+        {
+            add {
+                onIPHeaderReceived += value;
+            }
+            remove {
+                onIPHeaderReceived -= value;
+            }
+        }
+
+        protected virtual void OnIPHeaderReceived(IPHeaderEventArgs ipArgs)
+        {
+            onIPHeaderReceived?.Invoke(this, ipArgs);
         }
 
 
         private bool _continue = true;
+        private Socket _socket = null;
 
 
         /* ==========================
@@ -224,7 +142,7 @@ namespace Petersilie.ManagementTools.NetworkMonitor
                                                         Port, 
                                                         err);
 
-                    OnIPv4HeaderReceived(ipArgs);
+                    OnIPHeaderReceived(ipArgs);
 
                     monObj = new SocketStateObject(socket);
                     socket.BeginReceive(monObj.Data, 0,
@@ -238,57 +156,105 @@ namespace Petersilie.ManagementTools.NetworkMonitor
 
                 Buffer.BlockCopy(monObj.Data, 0, bytesReceived, 0, nReceived);
                 var header = IPHeader.Parse(bytesReceived);
-
                 if (header.IPVersion == IPVersion.IPv4)
                 {
                     var ipArgs = new IPHeaderEventArgs( header, 
                                                         IPAddress, 
                                                         Port);
-                    OnIPv4HeaderReceived(ipArgs);
+                    OnIPHeaderReceived(ipArgs);
                 }
 
                 monObj = new SocketStateObject(socket);
-                socket.BeginReceive(monObj.Data, 
-                                    0,
+                socket.BeginReceive(monObj.Data, 0,
                                     SocketStateObject.BUFFER_SIZE, 
                                     SocketFlags.None, 
                                     new AsyncCallback(OnReceive), 
                                     monObj);
             }
-            catch (Exception ex) {
-                Console.WriteLine();
-                Console.WriteLine(ex.GetType().Name);
-                Console.WriteLine(ex.Message);
+            catch (Exception ex)
+            {
+                var errArgs = new MonitorExceptionEventArgs(
+                    ex, _socket, IPAddress, Port);
+
+                OnErrorInternal(errArgs);
             }
         }
 
 
         public void Begin()
         {
-            var socket = new Socket(AddressFamily.InterNetwork, 
-                                    SocketType.Raw, 
-                                    ProtocolType.IP);
+            try
+            {
+                _socket = new Socket(AddressFamily.InterNetwork,
+                                     SocketType.Raw,
+                                     ProtocolType.IP);
 
-            socket.Bind(new IPEndPoint(IPAddress, Port));
+                _socket.Bind(new IPEndPoint(IPAddress, Port));
 
-            socket.SetSocketOption( SocketOptionLevel.IP, 
-                                    SocketOptionName.HeaderIncluded, 
-                                    true);
+                _socket.SetSocketOption(SocketOptionLevel.IP,
+                                        SocketOptionName.HeaderIncluded,
+                                        true);
 
-            SocketStateObject monObj = new SocketStateObject(socket);
-            socket.ReceiveBufferSize = SocketStateObject.BUFFER_SIZE;
-            socket.IOControl(IOControlCode.ReceiveAll, RCVALL_ON, RCVALL_ON);
-            socket.BeginReceive(monObj.Data, 0,
-                                SocketStateObject.BUFFER_SIZE, 
-                                SocketFlags.None, 
-                                new AsyncCallback(OnReceive), 
-                                monObj);
+                SocketStateObject monObj = new SocketStateObject(_socket);
+                _socket.ReceiveBufferSize = SocketStateObject.BUFFER_SIZE;
+                _socket.IOControl(IOControlCode.ReceiveAll, RCVALL_ON, RCVALL_ON);
+                _socket.BeginReceive(monObj.Data, 0,
+                                    SocketStateObject.BUFFER_SIZE,
+                                    SocketFlags.None,
+                                    new AsyncCallback(OnReceive),
+                                    monObj);
+            }
+            catch (Exception ex)
+            {
+                var errArgs = new MonitorExceptionEventArgs(
+                    ex, _socket, IPAddress, Port);
+
+                OnErrorInternal(errArgs);
+            }
         }
 
 
         public void Stop()
         {
             _continue = false;
+            TryRelease(_socket);
+        }
+
+
+        private static NetworkInterface[] GetInterfaces()
+        {
+            NetworkInterface[] interfaces = NetworkInterface.GetAllNetworkInterfaces();
+
+            var validInterfaces = new List<NetworkInterface>();
+            foreach (var netInt in interfaces)
+            {
+                bool isLoopBack = NetworkInterfaceType.Loopback == netInt.NetworkInterfaceType;
+                bool isTunnel = NetworkInterfaceType.Tunnel == netInt.NetworkInterfaceType;
+                bool isUp = OperationalStatus.Up == netInt.OperationalStatus;
+                bool isVirtualEth = netInt.Name.StartsWith("vEthernet");
+
+                if (!isLoopBack && !isTunnel && isUp && !isVirtualEth) {
+                    validInterfaces.Add(netInt);
+                }
+            }
+            return validInterfaces.ToArray();
+        }
+
+
+        public static NetworkMonitor[] BindInterfaces()
+        {
+            var validInterfaces = GetInterfaces();
+            var monitors = new List<NetworkMonitor>();
+            foreach (var netInterface in validInterfaces) {
+                var ipConfig = netInterface.GetIPProperties();
+                foreach (var uni in ipConfig.UnicastAddresses) {
+                    if (uni.Address.AddressFamily == AddressFamily.InterNetwork) {
+                        var mon = new NetworkMonitor(uni.Address);
+                        monitors.Add(mon);
+                    }
+                }
+            }
+            return monitors.ToArray();
         }
 
 
@@ -296,6 +262,31 @@ namespace Petersilie.ManagementTools.NetworkMonitor
         {
             IPAddress = target;
             Port = 0;
+        }
+
+
+        public NetworkMonitor(IPAddress target, int port)
+        {
+            IPAddress = target;
+            Port = port;
+        }
+
+
+        public NetworkMonitor(IPEndPoint target)
+        {
+            IPAddress = target.Address;
+            Port = target.Port;
+        }
+
+
+        ~NetworkMonitor() { Dispose(false); }
+        public void Dispose() { Dispose(true); }
+        private void Dispose(bool disposing)
+        {
+            if (disposing) {
+                GC.SuppressFinalize(this);
+            }
+            TryRelease(_socket);
         }
     }
 }

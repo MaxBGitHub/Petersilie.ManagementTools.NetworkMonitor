@@ -1,15 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
-using System.Net;
 
 namespace Petersilie.ManagementTools.NetworkMonitor.Header
 {
     public class ICMPHeader
     {
+        /// <summary>
+        /// Translated <see cref="Type"/> property.
+        /// </summary>
         public ICMPTypename Typename
         {
             get
@@ -24,15 +22,34 @@ namespace Petersilie.ManagementTools.NetworkMonitor.Header
             }
         }
 
+        /// <summary>
+        /// ICMP type, see <see cref="ICMPTypename"/>.
+        /// </summary>
         public byte Type { get; }
 
+        /// <summary>
+        /// ICMP subtype.
+        /// </summary>
         public byte Code { get; }
 
+        /// <summary>
+        /// Internet checksum (RFC 1071) for error checking.
+        /// </summary>
         public ushort Checksum { get; }
 
+        /// <summary>
+        /// ICMP error messages contain a data section that includes a 
+        /// copy of the entire IPv4 header, plus at leas the first eight
+        /// bytes of data from the IPv4 packet that caused the error message.
+        /// </summary>
         public byte[] Data { get; }
 
 
+        /// <summary>
+        /// Initializes a new instance of a ICMPHeader object.
+        /// </summary>
+        /// <param name="packet">Array containing ICMP 
+        /// data that can be parsed and reconstructed.</param>
         public ICMPHeader(byte[] packet)
         {
             using (var mem = new MemoryStream(packet))
