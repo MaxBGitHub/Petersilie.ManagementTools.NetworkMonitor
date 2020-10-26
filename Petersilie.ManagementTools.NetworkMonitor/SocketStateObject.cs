@@ -7,7 +7,7 @@ using System.Net.Sockets;
 
 namespace Petersilie.ManagementTools.NetworkMonitor
 {
-    internal class SocketStateObject
+    public class SocketStateObject
     {
         public const int BUFFER_SIZE = 0x4000;
 

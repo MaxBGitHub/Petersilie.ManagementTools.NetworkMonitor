@@ -33,27 +33,38 @@ namespace Petersilie.ManagementTools.NetworkMonitor.Header
         /// Bits 0-3. Always 4 in an IPv4 header.
         /// </summary>
         public byte Version { get; }
+
         /// <summary>
         /// Bits 4-7. IP header length.
         /// </summary>
         public byte IHL { get; }
+
         /// <summary>
         /// Length of header without options = (IHL * 32) / 8
         /// </summary>
-        public int HeaderLength { get { return (IHL * 32) / 8; } }
+        public int HeaderLength
+        {
+            get {
+                return (IHL * 32) / 8;
+            }
+        }
+
         /// <summary>
         /// Bits 8-15. Type of service, used to set priority of datagram.
         /// </summary>
         public byte TOS { get; }
+
         /// <summary>
         /// Bits 16-31. Total length of packet in byte (includes header).
         /// </summary>
         public ushort TotalLength { get; }
+
         /// <summary>
         /// Bits 32-47. Used for reassembly on fragmented packets
         /// when combined with Flags and Fragment offset.
         /// </summary>
         public ushort Identification { get; }
+
         /// <summary>
         /// Bits 48-50.
         /// <para>Bit 0 = Reserved.</para>
@@ -61,40 +72,68 @@ namespace Petersilie.ManagementTools.NetworkMonitor.Header
         /// <para>Bit 2 = MF (More fragments).</para>
         /// </summary>
         public byte[] Flags { get; } = new byte[3];
+
         /// <summary>
         /// Bit 0 of Flags.
         /// </summary>
-        public byte FlagResered { get { return Flags[0]; } }
+        public byte FlagResered
+        {
+            get {
+                return Flags[0];
+            }
+        }
+
         /// <summary>
         /// Bit 1 of Flags.
         /// </summary>
-        public bool FlagDoNotFragment { get { return Flags[1] == 1; } }
+        public bool FlagDoNotFragment
+        {
+            get {
+                return Flags[1] == 1;
+            }
+        }
+
         /// <summary>
         /// Bit 2 of Flags.
         /// </summary>
-        public bool FlagMoreFragments { get { return Flags[2] == 1; } }   
+        public bool FlagMoreFragments
+        {
+            get {
+                return Flags[2] == 1;
+            }
+        }   
+
         /// <summary>
         /// True if all Flag bits are 0.
         /// Indicates that there are no more fragements remaining.
         /// </summary>
-        public bool FlagNoMoreFragments { get { return (Flags[0] + Flags[1] + Flags[2]) == 0; } }
+        public bool FlagNoMoreFragments
+        { get {
+                return (Flags[0] + Flags[1] + Flags[2]) == 0;
+            }
+        }
+
         /// <summary>
         /// Bits 51-63. Contains start position of fragment
         /// if packet is fragmented.
         /// </summary>
         public ushort FragmentOffset { get; }
+
         /// <summary>
         /// Bits 64-71. Time to live.
         /// </summary>
         public byte TTL { get; }
+
         /// <summary>
         /// Bits 72-80. Protocol contained in the data/payload section.
         /// </summary>
         public Protocol Protocol { get; } = Protocol.UNDEFINED;
+
         /// <summary>
         /// Bits 81-96. Checksum of header.
         /// </summary>
         public ushort HeaderChecksum { get; }
+
         /// <summary>
         /// Bits 128-?. Possible Options are:
         /// <para>Strict Routing: Option contains whole path 
@@ -106,22 +145,31 @@ namespace Petersilie.ManagementTools.NetworkMonitor.Header
         /// <para>Security: Defines </para>
         /// </summary>
         public byte[] OptionsAndPadding { get; } = new byte[0];
+
         /// <summary>
-        /// Bits ?-?. Contains data of next protocol
+        /// Bits ?-?. Contains data of next protocol.
         /// </summary>
         public byte[] Data { get; } = new byte[0];
 
-        public override IPVersion IPVersion { get { return IPVersion.IPv4; } }
+        /// <summary>
+        /// IP Version 4.
+        /// </summary>
+        public override IPVersion IPVersion
+        {
+            get {
+                return IPVersion.IPv4;
+            }
+        }
 
         
         public IPv4Header(byte[] packet)
-        {            
+        {
+            byte b;
+            byte[] buffer;
+
             using (var mem = new MemoryStream(packet))
             using (var reader = new BinaryReader(mem))
-            {
-                byte b;
-                byte[] buffer;
-
+            {                
                 /*  0           4           8            12         16           20          24           31
                 **  |-------------------------------------------------------------------------------------|
                 **  |  Version  |    IHL    |           TOS         |             Total length            |

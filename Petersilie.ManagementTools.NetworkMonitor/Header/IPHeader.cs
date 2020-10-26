@@ -17,6 +17,7 @@ namespace Petersilie.ManagementTools.NetworkMonitor.Header
         /// IP address which is contained in the IP header bytes.
         /// </summary>
         public IPAddress SourceAddress { get; internal set; }
+
         /// <summary>
         /// When overriden in a class, contains the destination
         /// IP address which is contained in the IP header bytes.

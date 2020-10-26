@@ -15,12 +15,41 @@ namespace Petersilie.ManagementTools.NetworkMonitor
 {    
     public class NetworkMonitor : IDisposable
     {
+        /// <summary>
+        /// Runtime duration of the NetworkMonitor.
+        /// </summary>
+        public TimeSpan UpTime
+        {
+            get
+            {
+                if (_continue) {
+                    return DateTime.Now - _startedAt;
+                } else {
+                    return _endedAt - _startedAt;
+                }
+            }
+        }
+
+        // Start time of the NetworkMonitor.
+        private DateTime _startedAt;
+        // Time the NetworkMonitor ended.
+        private DateTime _endedAt;
+
+        /// <summary>
+        /// Socket bound IP address.
+        /// </summary>
         public IPAddress IPAddress { get; }
 
+        /// <summary>
+        /// Socket bound port.
+        /// </summary>
         public int Port { get; }
 
 
         private event EventHandler<MonitorExceptionEventArgs> onError;
+        /// <summary>
+        /// Occurs whenever the monitor runs into an exception or error.
+        /// </summary>
         public event EventHandler<MonitorExceptionEventArgs> OnError
         {
             add {
@@ -38,6 +67,9 @@ namespace Petersilie.ManagementTools.NetworkMonitor
 
 
         private event EventHandler<IPHeaderEventArgs> onIPHeaderReceived;
+        /// <summary>
+        /// Occurs whenever the monitor received a IP packet.
+        /// </summary>
         public event EventHandler<IPHeaderEventArgs> IPHeaderReceived
         {
             add {
@@ -54,7 +86,9 @@ namespace Petersilie.ManagementTools.NetworkMonitor
         }
 
 
+        // Stops execution if set to FALSE.
         private bool _continue = true;
+        // Socket used for monitoring.
         private Socket _socket = null;
 
 
@@ -91,6 +125,7 @@ namespace Petersilie.ManagementTools.NetworkMonitor
         };
 
 
+        // Tries to release the specified socket object.
         private void TryRelease(Socket s)
         {
             if (null == s) {
@@ -105,84 +140,103 @@ namespace Petersilie.ManagementTools.NetworkMonitor
         }
 
 
+        /* Async callback for Socket.BeginReceive.
+        ** Stops when _continue is set to FALSE.
+        ** IAsyncResult.AsyncState contains a SocketStateObject.
+        ** Raises the IPHeaderReceived event after parsing a valid packet.
+        ** Raises the OnError event if anything failes. */
         private void OnReceive(IAsyncResult ar)
         {
+            /* Get SocketStateObject instance stored in 
+            ** the IAsyncResult.AsyncState object member. */
             SocketStateObject monObj = ar.AsyncState as SocketStateObject;
             if (null == monObj) {
                 _continue = false;
                 return;
-            }
-
+            } /* Check if SocketStateObject is null. */
+            
             if ( !_continue ) {
                 TryRelease(monObj.Socket);
                 return;
-            }
+            } /* Continue receiving? */
 
             try
             {
+                // Get socket from SocketStateObject.
                 Socket socket = monObj.Socket;
                 if (null == socket) {
                     socket.Close();
                     socket.Dispose();
                     socket = null;
                     return;
-                }
+                } /* Check if received Socket is null. */
 
+                // Stores any socket error.
                 SocketError err;
-                int nReceived = socket.EndReceive(ar, out err);                
+                // Amount of bytes received from Socket.
+                int nReceived = socket.EndReceive(ar, out err);
+                // Allocate byte array to store received bytes.
                 byte[] bytesReceived = new byte[nReceived];
-                if (nReceived < 1)
-                {
+                // Event args for IPHeaderEventArgs.
+                IPHeaderEventArgs ipArgs = null;
+
+                if ( 1 > nReceived ) {
                     if (SocketError.Success == err) {
+                        // Assing SocketError.NoData.
                         err = SocketError.NoData;
-                    }
+                    } /* Check if we ran into any errors. */
 
-                    var ipArgs = new IPHeaderEventArgs( null, 
-                                                        IPAddress, 
-                                                        Port, 
-                                                        err);
+                    /* Create event args with no header object,
+                    ** the IP address, the port and the SocketError. */
+                    ipArgs = new IPHeaderEventArgs( null, 
+                                                    IPAddress, 
+                                                    Port, 
+                                                    err);
+                } /* No data received. */
+                else {
+                    // Copy received bytes to array.
+                    Buffer.BlockCopy(monObj.Data, 
+                                     0, 
+                                     bytesReceived, 
+                                     0, 
+                                     nReceived);
+                    // Parse bytes into IP header.
+                    var header = IPHeader.Parse(bytesReceived);                    
+                    /* Create event args with header object,
+                    ** IP address, port and no error. */
+                    ipArgs = new IPHeaderEventArgs( header,
+                                                    IPAddress,
+                                                    Port);                        
+                } /* Data received. */
 
-                    OnIPHeaderReceived(ipArgs);
-
-                    monObj = new SocketStateObject(socket);
-                    socket.BeginReceive(monObj.Data, 0,
-                                        SocketStateObject.BUFFER_SIZE,
-                                        SocketFlags.None,
-                                        new AsyncCallback(OnReceive),
-                                        monObj);
-
-                    return;
-                }
-
-                Buffer.BlockCopy(monObj.Data, 0, bytesReceived, 0, nReceived);
-                var header = IPHeader.Parse(bytesReceived);
-                if (header.IPVersion == IPVersion.IPv4)
-                {
-                    var ipArgs = new IPHeaderEventArgs( header, 
-                                                        IPAddress, 
-                                                        Port);
-                    OnIPHeaderReceived(ipArgs);
-                }
-
+                // Raise event.
+                OnIPHeaderReceived(ipArgs);
+                // Create new SocketStateObject instance.
                 monObj = new SocketStateObject(socket);
+                // Continue receiving raw packets.
                 socket.BeginReceive(monObj.Data, 0,
-                                    SocketStateObject.BUFFER_SIZE, 
-                                    SocketFlags.None, 
-                                    new AsyncCallback(OnReceive), 
+                                    SocketStateObject.BUFFER_SIZE,
+                                    SocketFlags.None,
+                                    new AsyncCallback(OnReceive),
                                     monObj);
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {                
+                // Create new error event args.
                 var errArgs = new MonitorExceptionEventArgs(
                     ex, _socket, IPAddress, Port);
-
+                // Raise error event.
                 OnErrorInternal(errArgs);
+
+                _endedAt = DateTime.Now;
+                _continue = false;
+                TryRelease(_socket);
             }
         }
 
 
         public void Begin()
         {
+            _startedAt = DateTime.Now;
             try
             {
                 _socket = new Socket(AddressFamily.InterNetwork,
@@ -216,6 +270,7 @@ namespace Petersilie.ManagementTools.NetworkMonitor
 
         public void Stop()
         {
+            _endedAt = DateTime.Now;
             _continue = false;
             TryRelease(_socket);
         }
@@ -283,6 +338,7 @@ namespace Petersilie.ManagementTools.NetworkMonitor
         public void Dispose() { Dispose(true); }
         private void Dispose(bool disposing)
         {
+            _endedAt = DateTime.Now;
             if (disposing) {
                 GC.SuppressFinalize(this);
             }
