@@ -66,23 +66,23 @@ namespace Petersilie.ManagementTools.NetworkMonitor
         }
 
 
-        private event EventHandler<IPHeaderEventArgs> onIPHeaderReceived;
+        private event EventHandler<PacketEventArgs> onPacketReceived;
         /// <summary>
         /// Occurs whenever the monitor received a IP packet.
         /// </summary>
-        public event EventHandler<IPHeaderEventArgs> IPHeaderReceived
+        public event EventHandler<PacketEventArgs> PacketReceived
         {
             add {
-                onIPHeaderReceived += value;
+                onPacketReceived += value;
             }
             remove {
-                onIPHeaderReceived -= value;
+                onPacketReceived -= value;
             }
         }
 
-        protected virtual void OnIPHeaderReceived(IPHeaderEventArgs ipArgs)
+        protected virtual void OnPacketReceived(PacketEventArgs ipArgs)
         {
-            onIPHeaderReceived?.Invoke(this, ipArgs);
+            onPacketReceived?.Invoke(this, ipArgs);
         }
 
 
@@ -143,7 +143,7 @@ namespace Petersilie.ManagementTools.NetworkMonitor
         /* Async callback for Socket.BeginReceive.
         ** Stops when _continue is set to FALSE.
         ** IAsyncResult.AsyncState contains a SocketStateObject.
-        ** Raises the IPHeaderReceived event after parsing a valid packet.
+        ** Raises the PacketReceived event after parsing a valid packet.
         ** Raises the OnError event if anything failes. */
         private void OnReceive(IAsyncResult ar)
         {
@@ -177,8 +177,8 @@ namespace Petersilie.ManagementTools.NetworkMonitor
                 int nReceived = socket.EndReceive(ar, out err);
                 // Allocate byte array to store received bytes.
                 byte[] bytesReceived = new byte[nReceived];
-                // Event args for IPHeaderEventArgs.
-                IPHeaderEventArgs ipArgs = null;
+                // Event args for PacketEventArgs.
+                PacketEventArgs ipArgs = null;
 
                 if ( 1 > nReceived ) {
                     if (SocketError.Success == err) {
@@ -188,7 +188,7 @@ namespace Petersilie.ManagementTools.NetworkMonitor
 
                     /* Create event args with no header object,
                     ** the IP address, the port and the SocketError. */
-                    ipArgs = new IPHeaderEventArgs( null, 
+                    ipArgs = new PacketEventArgs( null, 
                                                     IPAddress, 
                                                     Port, 
                                                     err);
@@ -204,13 +204,13 @@ namespace Petersilie.ManagementTools.NetworkMonitor
                     var header = IPHeader.Parse(bytesReceived);                    
                     /* Create event args with header object,
                     ** IP address, port and no error. */
-                    ipArgs = new IPHeaderEventArgs( header,
+                    ipArgs = new PacketEventArgs( header,
                                                     IPAddress,
                                                     Port);                        
                 } /* Data received. */
 
                 // Raise event.
-                OnIPHeaderReceived(ipArgs);
+                OnPacketReceived(ipArgs);
                 // Create new SocketStateObject instance.
                 monObj = new SocketStateObject(socket);
                 // Continue receiving raw packets.

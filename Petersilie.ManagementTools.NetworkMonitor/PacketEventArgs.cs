@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
 
-namespace Petersilie.ManagementTools.NetworkMonitor.Header
+using Petersilie.ManagementTools.NetworkMonitor.Header;
+
+namespace Petersilie.ManagementTools.NetworkMonitor
 {
-    public class IPHeaderEventArgs : EventArgs
+    public class PacketEventArgs : EventArgs
     {
         public IPHeader     Header          { get; } // Parsed header.
         public IPAddress    SocketAddress   { get; } // Bound Socket IP.
@@ -17,10 +19,10 @@ namespace Petersilie.ManagementTools.NetworkMonitor.Header
         public IPVersion    Version         { get; } // Version of header.
 
 
-        public IPHeaderEventArgs(   IPHeader    header, 
-                                    IPAddress   sAddrs, 
-                                    int         sPort, 
-                                    SocketError sErr)
+        public PacketEventArgs( IPHeader    header, 
+                                IPAddress   sAddrs, 
+                                int         sPort, 
+                                SocketError sErr)
         {
             if (null != header) {
                 Header  = header;
@@ -33,9 +35,9 @@ namespace Petersilie.ManagementTools.NetworkMonitor.Header
         }
 
 
-        public IPHeaderEventArgs(   IPHeader    header, 
-                                    IPAddress   sAddrs, 
-                                    int         sPort)
+        public PacketEventArgs( IPHeader    header, 
+                                IPAddress   sAddrs, 
+                                int         sPort)
         {
             if (null != header) {
                 Header  = header;

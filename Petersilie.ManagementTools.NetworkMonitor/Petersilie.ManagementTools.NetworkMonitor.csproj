@@ -49,11 +49,11 @@
     <Compile Include="Header\ICMPHeader.cs" />
     <Compile Include="Header\IPHeader.cs" />
     <Compile Include="Header\IPv4Header.cs" />
-    <Compile Include="Header\IPHeaderEventArgs.cs" />
+    <Compile Include="PacketEventArgs.cs" />
     <Compile Include="Header\IPv6Header.cs" />
     <Compile Include="Header\TCPHeader.cs" />
     <Compile Include="Header\UDPHeader.cs" />
-    <Compile Include="MonitorException.cs" />
+    <Compile Include="MonitorExceptionEventArgs.cs" />
     <Compile Include="NetworkMonitor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Enums.cs" />
