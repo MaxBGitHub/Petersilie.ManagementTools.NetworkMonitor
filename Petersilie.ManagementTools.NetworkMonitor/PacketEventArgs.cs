@@ -6,20 +6,20 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
 
-using Petersilie.ManagementTools.NetworkMonitor.Header;
+using Petersilie.ManagementTools.NetworkMonitor;
 
 namespace Petersilie.ManagementTools.NetworkMonitor
 {
     public class PacketEventArgs : EventArgs
     {
-        public IPHeader     Header          { get; } // Parsed header.
+        public IIPHeader     Header          { get; } // Parsed header.
         public IPAddress    SocketAddress   { get; } // Bound Socket IP.
         public int          SocketPort      { get; } // Bound Socket Port.
         public SocketError  SocketError     { get; } // Caught Error.
         public IPVersion    Version         { get; } // Version of header.
 
 
-        public PacketEventArgs( IPHeader    header, 
+        public PacketEventArgs( IIPHeader   header, 
                                 IPAddress   sAddrs, 
                                 int         sPort, 
                                 SocketError sErr)
@@ -35,7 +35,7 @@ namespace Petersilie.ManagementTools.NetworkMonitor
         }
 
 
-        public PacketEventArgs( IPHeader    header, 
+        public PacketEventArgs( IIPHeader   header, 
                                 IPAddress   sAddrs, 
                                 int         sPort)
         {

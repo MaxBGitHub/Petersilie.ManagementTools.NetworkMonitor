@@ -7,7 +7,7 @@ using System.IO;
 using System.Net;
 
 
-namespace Petersilie.ManagementTools.NetworkMonitor.Header
+namespace Petersilie.ManagementTools.NetworkMonitor
 {
     /*  
     **   0           4           8            12         16           20          24           31
@@ -27,7 +27,7 @@ namespace Petersilie.ManagementTools.NetworkMonitor.Header
     **   |                                                                                     |
     **   |-------------------------------------------------------------------------------------| 
     */
-    public partial class IPv4Header : IPHeader
+    public partial class IPv4Header : IIPHeader
     {
         /// <summary>
         /// Bits 0-3. Always 4 in an IPv4 header.
@@ -76,42 +76,23 @@ namespace Petersilie.ManagementTools.NetworkMonitor.Header
         /// <summary>
         /// Bit 0 of Flags.
         /// </summary>
-        public byte FlagResered
-        {
-            get {
-                return Flags[0];
-            }
-        }
+        public byte FlagResered { get; }
 
         /// <summary>
         /// Bit 1 of Flags.
         /// </summary>
-        public bool FlagDoNotFragment
-        {
-            get {
-                return Flags[1] == 1;
-            }
-        }
+        public bool FlagDoNotFragment { get; }
 
         /// <summary>
         /// Bit 2 of Flags.
         /// </summary>
-        public bool FlagMoreFragments
-        {
-            get {
-                return Flags[2] == 1;
-            }
-        }   
+        public bool FlagMoreFragments { get; }
 
         /// <summary>
         /// True if all Flag bits are 0.
         /// Indicates that there are no more fragements remaining.
         /// </summary>
-        public bool FlagNoMoreFragments
-        { get {
-                return (Flags[0] + Flags[1] + Flags[2]) == 0;
-            }
-        }
+        public bool FlagNoMoreFragments { get; }
 
         /// <summary>
         /// Bits 51-63. Contains start position of fragment
@@ -154,12 +135,16 @@ namespace Petersilie.ManagementTools.NetworkMonitor.Header
         /// <summary>
         /// IP Version 4.
         /// </summary>
-        public override IPVersion IPVersion
+        public IPVersion IPVersion
         {
             get {
                 return IPVersion.IPv4;
             }
         }
+
+        public IPAddress SourceAddress { get; }
+
+        public IPAddress DestinationAddress { get; }
 
         
         public IPv4Header(byte[] packet)
@@ -192,6 +177,10 @@ namespace Petersilie.ManagementTools.NetworkMonitor.Header
                 Flags[0] = (byte)(bits.Get(5) ? 1 : 0);
                 Flags[1] = (byte)(bits.Get(6) ? 1 : 0);
                 Flags[2] = (byte)(bits.Get(7) ? 1 : 0);
+                FlagResered = Flags[0];
+                FlagDoNotFragment = bits.Get(6);
+                FlagMoreFragments = bits.Get(7);
+                FlagNoMoreFragments = Flags[0] + Flags[1] + Flags[2] == 0;
                 bits.Set(5, false);
                 bits.Set(6, false);
                 bits.Set(7, false);

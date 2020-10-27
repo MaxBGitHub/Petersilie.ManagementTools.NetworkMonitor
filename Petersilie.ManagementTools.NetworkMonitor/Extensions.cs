@@ -1,5 +1,5 @@
 ﻿
-namespace Petersilie.ManagementTools.NetworkMonitor.Header
+namespace Petersilie.ManagementTools.NetworkMonitor
 {
     /// <summary>
     /// Extension class for <see cref="byte"/>

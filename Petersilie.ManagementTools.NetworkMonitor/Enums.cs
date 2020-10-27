@@ -6,33 +6,25 @@ using System.Threading.Tasks;
 
 namespace Petersilie.ManagementTools.NetworkMonitor
 {
-    public enum ICMPTypename : byte
-    {
-        EchoReply = 0,
-        DestinationUnreachable = 3,
-        SourceQuench = 4,
-        RedirectMessage = 5,
-        EchoRequest = 8,
-        RouterAdvertisement = 9,
-        RouterSolicitation = 10,
-        TimeExceeded = 11,
-        ParameterProblem_BadIPHeader = 12,
-        Timestamp = 13,
-        TimestampReply = 14,
-        InformationRequest = 16,
-        AddressMaskRequest = 17,
-        AddressMaskReply = 18,
-        Traceroute = 30,
-        ExtendedEchoRequest = 42,
-        ExtendedEchoReply = 43,
-        UNDEFINED = 255
-    }
-
-
-    public enum IGMPVersion {
-        IGMPv1,
-        IGMPv2,
-        IGMPv3
+    public enum ICMPTypename : byte {
+        EchoReply                       = 0,
+        DestinationUnreachable          = 3,
+        SourceQuench                    = 4,
+        RedirectMessage                 = 5,
+        EchoRequest                     = 8,
+        RouterAdvertisement             = 9,
+        RouterSolicitation              = 10,
+        TimeExceeded                    = 11,
+        ParameterProblem_BadIPHeader    = 12,
+        Timestamp                       = 13,
+        TimestampReply                  = 14,
+        InformationRequest              = 16,
+        AddressMaskRequest              = 17,
+        AddressMaskReply                = 18,
+        Traceroute                      = 30,
+        ExtendedEchoRequest             = 42,
+        ExtendedEchoReply               = 43,
+        UNDEFINED                       = 255
     }
 
     public enum IPVersion {

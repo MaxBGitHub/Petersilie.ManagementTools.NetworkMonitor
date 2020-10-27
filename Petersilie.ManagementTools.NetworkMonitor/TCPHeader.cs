@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 
-namespace Petersilie.ManagementTools.NetworkMonitor.Header
+namespace Petersilie.ManagementTools.NetworkMonitor
 {
     public class TCPHeader
     {

@@ -8,7 +8,7 @@ using System.Net.Sockets;
 using System.Net.NetworkInformation;
 using System.Timers;
 using System.Runtime.InteropServices;
-using Petersilie.ManagementTools.NetworkMonitor.Header;
+using Petersilie.ManagementTools.NetworkMonitor;
 
 
 namespace Petersilie.ManagementTools.NetworkMonitor
@@ -204,9 +204,9 @@ namespace Petersilie.ManagementTools.NetworkMonitor
                     var header = IPHeader.Parse(bytesReceived);                    
                     /* Create event args with header object,
                     ** IP address, port and no error. */
-                    ipArgs = new PacketEventArgs( header,
-                                                    IPAddress,
-                                                    Port);                        
+                    ipArgs = new PacketEventArgs(header,
+                                                 IPAddress,
+                                                 Port);                        
                 } /* Data received. */
 
                 // Raise event.
@@ -230,6 +230,8 @@ namespace Petersilie.ManagementTools.NetworkMonitor
                 _endedAt = DateTime.Now;
                 _continue = false;
                 TryRelease(_socket);
+
+                throw new Exception(ex.Message);
             }
         }
 
@@ -264,6 +266,8 @@ namespace Petersilie.ManagementTools.NetworkMonitor
                     ex, _socket, IPAddress, Port);
 
                 OnErrorInternal(errArgs);
+
+                throw new Exception(ex.Message);
             }
         }
 

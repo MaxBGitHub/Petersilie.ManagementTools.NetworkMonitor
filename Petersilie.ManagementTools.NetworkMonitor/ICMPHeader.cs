@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace Petersilie.ManagementTools.NetworkMonitor.Header
+namespace Petersilie.ManagementTools.NetworkMonitor
 {
     public class ICMPHeader
     {

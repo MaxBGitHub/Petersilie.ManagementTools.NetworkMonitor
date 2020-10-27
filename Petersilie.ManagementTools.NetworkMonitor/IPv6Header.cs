@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Net;
 
-namespace Petersilie.ManagementTools.NetworkMonitor.Header
+namespace Petersilie.ManagementTools.NetworkMonitor
 {
-    public partial class IPv6Header : IPHeader
+    public partial class IPv6Header : IIPHeader
     {
         public byte Version { get; }
 
@@ -22,7 +22,16 @@ namespace Petersilie.ManagementTools.NetworkMonitor.Header
 
         public byte HopLimit { get; }
 
-        public override IPVersion IPVersion { get { return IPVersion.IPv6; } }
+        public IPVersion IPVersion
+        {
+            get {
+                return IPVersion.IPv6;
+            }
+        }
+
+        public IPAddress SourceAddress { get; }
+
+        public IPAddress DestinationAddress { get; }
 
 
         public IPv6Header(byte[] packet)
