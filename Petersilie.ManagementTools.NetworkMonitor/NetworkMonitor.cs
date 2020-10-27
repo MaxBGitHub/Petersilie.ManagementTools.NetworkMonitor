@@ -117,7 +117,7 @@ namespace Petersilie.ManagementTools.NetworkMonitor
         ** SIO_RCVALL is what enables the NIC to be sniffed,
         ** and what level of sniffing is allowed (to some extend).
         */
-        static byte[] RCVALL_ON = new byte[4] {
+        static readonly byte[] RCVALL_ON = new byte[4] {
             1,
             0,
             0,
@@ -204,7 +204,7 @@ namespace Petersilie.ManagementTools.NetworkMonitor
                     var header = IPHeader.Parse(bytesReceived);                    
                     /* Create event args with header object,
                     ** IP address, port and no error. */
-                    ipArgs = new PacketEventArgs(header,
+                    ipArgs = new PacketEventArgs(bytesReceived,
                                                  IPAddress,
                                                  Port);                        
                 } /* Data received. */

@@ -12,41 +12,35 @@ namespace Petersilie.ManagementTools.NetworkMonitor
 {
     public class PacketEventArgs : EventArgs
     {
-        public IIPHeader     Header          { get; } // Parsed header.
+        public byte[]       Packet          { get; } // Raw packet bytes.
         public IPAddress    SocketAddress   { get; } // Bound Socket IP.
         public int          SocketPort      { get; } // Bound Socket Port.
         public SocketError  SocketError     { get; } // Caught Error.
         public IPVersion    Version         { get; } // Version of header.
 
 
-        public PacketEventArgs( IIPHeader   header, 
+        public PacketEventArgs( byte[]      packet, 
                                 IPAddress   sAddrs, 
                                 int         sPort, 
                                 SocketError sErr)
         {
-            if (null != header) {
-                Header  = header;
-                Version = header.IPVersion;
-            } /* Check header for null. */
-
+            Packet          = packet;
             SocketAddress   = sAddrs;
             SocketPort      = sPort;
-            SocketError     = sErr;            
+            SocketError     = sErr;
+            Version         = IPHeader.GetVersion(packet);
         }
 
 
-        public PacketEventArgs( IIPHeader   header, 
+        public PacketEventArgs( byte[]      packet, 
                                 IPAddress   sAddrs, 
                                 int         sPort)
         {
-            if (null != header) {
-                Header  = header;
-                Version = header.IPVersion;
-            } /* Check header for null. */
-
+            Packet          = packet;
             SocketAddress   = sAddrs;
             SocketPort      = sPort;
-            SocketError     = SocketError.Success;            
+            SocketError     = SocketError.Success;
+            Version         = IPHeader.GetVersion(packet);
         }
     }
 }

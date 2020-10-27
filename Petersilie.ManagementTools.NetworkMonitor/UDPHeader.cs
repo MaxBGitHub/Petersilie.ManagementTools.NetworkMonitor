@@ -17,9 +17,6 @@ namespace Petersilie.ManagementTools.NetworkMonitor
 
         public UDPHeader(byte[] packet)
         {
-            byte b;
-            byte[] buffer;
-
             using (var mem = new MemoryStream(packet))
             using (var reader = new BinaryReader(mem))
             {
