@@ -142,6 +142,41 @@ namespace Petersilie.ManagementTools.NetworkMonitor
 
         public IPAddress DestinationAddress { get; }
 
+
+        public byte[] GetBytes()
+        {
+            byte b;
+            byte[] buffer;
+
+            using (var mem = new MemoryStream())
+            using (var writer = new BinaryWriter(mem))
+            {
+                writer.Write(Version.AddLowNibble(IHL));
+                writer.Write(TOS);
+                writer.Write(TotalLength);
+                writer.Write(Identification);
+
+                var bits = new System.Collections.BitArray(8, false);
+                bits.Set(7, Flags[0] == 1 ? true : false);
+                bits.Set(6, Flags[1] == 1 ? true : false);
+                bits.Set(5, Flags[2] == 1 ? true : false);
+
+                b = (byte)(Flags[0] | Flags[1] | Flags[2]);
+                writer.Write((ushort)(b | FragmentOffset));
+                writer.Write(TTL);
+                writer.Write((byte)Protocol);
+                writer.Write(HeaderChecksum);
+                writer.Write(SourceAddress.GetAddressBytes());
+                writer.Write(DestinationAddress.GetAddressBytes());
+                writer.Write(OptionsAndPadding);
+                writer.Write(Data);
+
+                buffer = mem.ToArray();
+            }
+            return buffer;
+        }
+
+
         
         public IPv4Header(byte[] packet)
         {
@@ -169,10 +204,11 @@ namespace Petersilie.ManagementTools.NetworkMonitor
                 **  |-------------------------------------------------------------------------------------|
                 */
                 Identification = reader.ReadUInt16();
-                var bits = new System.Collections.BitArray(new byte[] { reader.ReadByte() });
-                Flags[0] = (byte)(bits.Get(5) ? 1 : 0);
-                Flags[1] = (byte)(bits.Get(6) ? 1 : 0);
-                Flags[2] = (byte)(bits.Get(7) ? 1 : 0);
+                b = reader.ReadByte();
+                var bits = new System.Collections.BitArray(new byte[] { b });
+                Flags[0] = (byte)((b & (1 << 7)) == 0 ? 0 : 1); //(byte)(bits.Get(5) ? 1 : 0);
+                Flags[1] = (byte)((b & (1 << 6)) == 0 ? 0 : 1); //(byte)(bits.Get(6) ? 1 : 0);
+                Flags[2] = (byte)((b & (1 << 5)) == 0 ? 0 : 1); //(byte)(bits.Get(7) ? 1 : 0);
                 FlagResered = Flags[0];
                 FlagDoNotFragment = bits.Get(6);
                 FlagMoreFragments = bits.Get(7);
@@ -182,6 +218,7 @@ namespace Petersilie.ManagementTools.NetworkMonitor
                 bits.Set(7, false);
                 buffer = new byte[1];
                 bits.CopyTo(buffer, 0);
+                var r = b.SetBits(false, 5, 7);
                 FragmentOffset = buffer[0];
                 FragmentOffset += reader.ReadByte();
 
