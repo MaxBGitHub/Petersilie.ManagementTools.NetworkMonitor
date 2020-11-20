@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{724944EF-C81D-407E-9D44-832B30A45920}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Petersilie.ManagementTools.NetworkMonitor</RootNamespace>
     <AssemblyName>Petersilie.ManagementTools.NetworkMonitor</AssemblyName>
@@ -51,7 +51,6 @@
     <Compile Include="IPv6Header.cs" />
     <Compile Include="ICMPTypeCodeMap.cs" />
     <Compile Include="TCPHeader.cs" />
-    <Compile Include="test.cs" />
     <Compile Include="UDPHeader.cs" />
     <Compile Include="MonitorExceptionEventArgs.cs" />
     <Compile Include="NetworkMonitor.cs" />
