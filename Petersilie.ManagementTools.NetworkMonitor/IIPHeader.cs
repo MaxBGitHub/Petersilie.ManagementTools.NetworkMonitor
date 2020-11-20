@@ -1,6 +1,9 @@
 ﻿
 namespace Petersilie.ManagementTools.NetworkMonitor
 {
+    /// <summary>
+    /// Interface for IPv4 and IPv6 headers.
+    /// </summary>
     public interface IIPHeader : IHeader
     {
         /// <summary>

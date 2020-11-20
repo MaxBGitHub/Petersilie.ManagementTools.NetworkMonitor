@@ -1,6 +1,9 @@
 ﻿
 namespace Petersilie.ManagementTools.NetworkMonitor
 {
+    /// <summary>
+    /// Interface for all Header classes.
+    /// </summary>
     public interface IHeader
     {
         /// <summary>

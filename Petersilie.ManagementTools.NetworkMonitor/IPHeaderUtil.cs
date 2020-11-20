@@ -2,8 +2,18 @@
 
 namespace Petersilie.ManagementTools.NetworkMonitor
 {
+    /// <summary>
+    /// Utility class for identifying the Internet Protocol Version
+    /// of an IP packet and to parse a packet.
+    /// </summary>
     public static class IPHeaderUtil
     {
+        /// <summary>
+        /// Gets the specific Internet Protocol Version from the 
+        /// raw data stream.
+        /// </summary>
+        /// <param name="packet">Raw packet data.</param>
+        /// <returns></returns>
         public static IPVersion GetVersion(byte[] packet)
         {
             if (null == packet) {
@@ -30,6 +40,13 @@ namespace Petersilie.ManagementTools.NetworkMonitor
         }
 
 
+        /// <summary>
+        /// Parses a raw packet into an IPv4 or IPv6 header.
+        /// If it is not an Internet Protocol packet than the 
+        /// function returns null.
+        /// </summary>
+        /// <param name="packet">Raw IP packet.</param>
+        /// <returns></returns>
         public static IIPHeader Parse(byte[] packet)
         {
             if (null == packet) {

@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace Petersilie.ManagementTools.NetworkMonitor
 {
+    /// <summary>
+    /// Contains the type, code and specific description
+    /// of an ICMP datagram.
+    /// </summary>
     public struct ICMPTypeCodeEntry
     {
         public ICMPTypename Typename

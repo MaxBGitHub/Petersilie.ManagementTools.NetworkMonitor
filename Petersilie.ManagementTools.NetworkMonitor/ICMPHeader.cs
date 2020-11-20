@@ -14,6 +14,9 @@ namespace Petersilie.ManagementTools.NetworkMonitor
     **   |                                                                                     |
     **   |-------------------------------------------------------------------------------------|
     */
+    /// <summary>
+    /// Header for ICMP datagrams.
+    /// </summary>
     public class ICMPHeader : IHeader
     {
         /// <summary>

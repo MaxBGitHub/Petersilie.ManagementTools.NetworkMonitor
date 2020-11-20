@@ -1,6 +1,9 @@
 ﻿
 namespace Petersilie.ManagementTools.NetworkMonitor
 {
+    /// <summary>
+    /// Enum to descripe the Type field value of an ICMP packet.
+    /// </summary>
     public enum ICMPTypename : byte {
         EchoReply                       = 0,
         DestinationUnreachable          = 3,
@@ -22,7 +25,9 @@ namespace Petersilie.ManagementTools.NetworkMonitor
         UNDEFINED                       = 255
     }
 
-
+    /// <summary>
+    /// Internet Protocol Version.
+    /// </summary>
     public enum IPVersion {
         Other = 0,
         IPv4 = 4,
@@ -30,6 +35,9 @@ namespace Petersilie.ManagementTools.NetworkMonitor
     }
 
 
+    /// <summary>
+    /// Known Protocols.
+    /// </summary>
     public enum Protocol
     {
         UNDEFINED = -1,
