@@ -47,6 +47,10 @@ The PacketReceived event uses the custom PacketEventArgs class.
 This class contains the raw packet data aswell as some socket 
 information or error codes.
 
+### Stopping the NetworkMonitor
+Simply call the NetworkMonitor.Stop() method or dispose your the NetworkMonitor object.
+
+
 ### Parsing a packet
 The project contains 5 predefined headers.
 ```csharp
@@ -56,4 +60,44 @@ Petersilie.ManagementTools.NetworkMonitor.UDPHeader
 Petersilie.ManagementTools.NetworkMonitor.TCPHeader
 Petersilie.ManagementTools.NetworkMonitor.ICMPHeader
 ```
+
+#### Parsing a IPv4 header
+Parsing an IPv4 packet is simple.
+The NetworkMonitor checks internally if the received packet is an IP packet.
+You only need to check if the Version property in the PacketEventArgs object
+is IPVersion.IPv4 and then create an IPv4Header object instance by passing the 
+raw packet data from the PacketEventArgs to the IPv4Header class constructor.
+```csharp
+private void NetworkMonitor_PacketReceived(object sender, PacketEventArgs pargs) 
+{
+    if (IPVersion.IPv4 == pargs.Version) {
+        var ipv4Header = new IPv4Header(pargs.Packet);
+        /* Process header or check which protocol is within the 
+        ** data payload of the IPv4 header and parse it. */
+    }
+}
+```
+
+#### Parsing a protocol within the data payload of IPv4 packet
+If you parsed a packet into the IPv4Header class you are able to 
+extract the next protocol from it. The IPv4Header class stores the type of the next 
+protocol, which is contained in the data payload, in its Protocol property.
+
+This is how you get a TCP packet from the IPv4Header object:
+```csharp
+private void NetworkMonitor_PacketReceived(object sender, PacketEventArgs pargs) 
+{
+    if (IPVersion.IPv4 == pargs.Version) {
+        var ipv4Header = new IPv4Header(pargs.Packet);
+        if (Protocol.TCP == ipv4Header.Protocol) {
+            var tcpHeader = new TCPHeader(ipv4Header.Data);
+        }
+    }
+}
+```
+
+You can parse the predefined ICMPHeader, TCPHeader, UDPHeader from the 
+data payload of a IPv4Header object.
+All other protocols have to be implemented by yourself and will not be implemented by me.
+
 
