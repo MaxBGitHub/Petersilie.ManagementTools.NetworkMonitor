@@ -22,7 +22,7 @@ namespace Petersilie.ManagementTools.NetworkMonitor
             SocketAddress   = sAddrs;
             SocketPort      = sPort;
             SocketError     = sErr;
-            Version         = IPHeader.GetVersion(packet);
+            Version         = IPHeaderUtil.GetVersion(packet);
         }
 
 
@@ -34,7 +34,7 @@ namespace Petersilie.ManagementTools.NetworkMonitor
             SocketAddress   = sAddrs;
             SocketPort      = sPort;
             SocketError     = SocketError.Success;
-            Version         = IPHeader.GetVersion(packet);
+            Version         = IPHeaderUtil.GetVersion(packet);
         }
     }
 }

@@ -22,11 +22,13 @@ namespace Petersilie.ManagementTools.NetworkMonitor
         UNDEFINED                       = 255
     }
 
+
     public enum IPVersion {
         Other = 0,
         IPv4 = 4,
         IPv6 = 6,        
     }
+
 
     public enum Protocol
     {

@@ -42,11 +42,14 @@
   <ItemGroup>
     <Compile Include="Extensions.cs" />
     <Compile Include="ICMPHeader.cs" />
+    <Compile Include="ICMPTypeCodeEntry.cs" />
+    <Compile Include="IHeader.cs" />
     <Compile Include="IIPHeader.cs" />
-    <Compile Include="IPHeader.cs" />
+    <Compile Include="IPHeaderUtil.cs" />
     <Compile Include="IPv4Header.cs" />
     <Compile Include="PacketEventArgs.cs" />
     <Compile Include="IPv6Header.cs" />
+    <Compile Include="ICMPTypeCodeMap.cs" />
     <Compile Include="TCPHeader.cs" />
     <Compile Include="test.cs" />
     <Compile Include="UDPHeader.cs" />

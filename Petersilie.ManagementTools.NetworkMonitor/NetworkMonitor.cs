@@ -195,7 +195,7 @@ namespace Petersilie.ManagementTools.NetworkMonitor
                                      0, 
                                      nReceived);
                     // Parse bytes into IP header.
-                    var header = IPHeader.Parse(bytesReceived);                    
+                    var header = IPHeaderUtil.Parse(bytesReceived);                    
                     /* Create event args with header object,
                     ** IP address, port and no error. */
                     ipArgs = new PacketEventArgs(bytesReceived,
@@ -220,12 +220,6 @@ namespace Petersilie.ManagementTools.NetworkMonitor
                     ex, _socket, IPAddress, Port);
                 // Raise error event.
                 OnErrorInternal(errArgs);
-
-                _endedAt = DateTime.Now;
-                _continue = false;
-                TryRelease(_socket);
-
-                throw new Exception(ex.Message);
             }
         }
 
@@ -256,11 +250,6 @@ namespace Petersilie.ManagementTools.NetworkMonitor
             }
             catch (Exception ex)
             {
-                var errArgs = new MonitorExceptionEventArgs(
-                    ex, _socket, IPAddress, Port);
-
-                OnErrorInternal(errArgs);
-
                 throw new Exception(ex.Message);
             }
         }

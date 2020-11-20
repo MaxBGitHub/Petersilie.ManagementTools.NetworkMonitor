@@ -2,7 +2,7 @@
 
 namespace Petersilie.ManagementTools.NetworkMonitor
 {
-    public class IPHeader
+    public static class IPHeaderUtil
     {
         public static IPVersion GetVersion(byte[] packet)
         {
