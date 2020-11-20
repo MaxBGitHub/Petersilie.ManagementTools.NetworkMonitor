@@ -144,8 +144,7 @@ namespace Petersilie.ManagementTools.NetworkMonitor
             /* Get SocketStateObject instance stored in 
             ** the IAsyncResult.AsyncState object member. */
             SocketStateObject monObj = ar.AsyncState as SocketStateObject;
-            if (null == monObj) {
-                _continue = false;
+            if ( null == monObj ) {
                 return;
             } /* Check if SocketStateObject is null. */
             
@@ -182,7 +181,7 @@ namespace Petersilie.ManagementTools.NetworkMonitor
 
                     /* Create event args with no header object,
                     ** the IP address, the port and the SocketError. */
-                    ipArgs = new PacketEventArgs( null, 
+                    ipArgs = new PacketEventArgs(   null, 
                                                     IPAddress, 
                                                     Port, 
                                                     err);
