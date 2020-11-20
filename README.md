@@ -27,7 +27,15 @@ NetworkMonitor(IPAddress)
 NetworkMonitor(IPAddress, int)
 NetworkMonitor(IPEndPoint)
 ```
-Example initialization:
+You can also bind all active interfaces by using the static BindInterfaces() method.
+It returns an array of NetworkMonitor objects.
+``` csharp
+NetworkMonitor[] netMonitors = NetworkMonitor.BindInterfaces();
+```
+
+### Receiving data from NetworkMonitor class
+In order to actually receive data from the NetworkMonitor class
+you need to subscribe to its PacketReceived event.
 ```csharp
 System.Net.IPAddress addr = IPAddress.Parse("127.0.0.1");
 var netMonitor = new NetworkMonitor(addr);
@@ -35,10 +43,17 @@ netMonitor.PacketReceived += NetworkMonitor_PacketReceived;
 netMonitor.OnError += NetworkMonitor_OnError;
 netMonitor.Begin();
 ```
+The PacketReceived event uses the custom PacketEventArgs class.
+This class contains the raw packet data aswell as some socket 
+information or error codes.
 
-You can also bind all active interfaces by using the static BindInterfaces() method.
-It returns an array of NetworkMonitor objects.
-``` csharp
-NetworkMonitor[] netMonitors = NetworkMonitor.BindInterfaces();
+### Parsing a packet
+The project contains 5 predefined headers.
+```csharp
+Petersilie.ManagementTools.NetworkMonitor.IPv4Header
+Petersilie.ManagementTools.NetworkMonitor.IPv6Header
+Petersilie.ManagementTools.NetworkMonitor.UDPHeader
+Petersilie.ManagementTools.NetworkMonitor.TCPHeader
+Petersilie.ManagementTools.NetworkMonitor.ICMPHeader
 ```
 
