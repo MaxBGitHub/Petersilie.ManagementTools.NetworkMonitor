@@ -20,8 +20,7 @@ Download the project and build it.
 Add the projects Dll as a reference to a other project in which you want to use the NetworkMonitor class.
 
 ## Usage
-You can bind a specific IP and port to the NetworkMonitor by using one of its, the default port is 0.
-3 constructors
+You can bind a specific IP and port to the NetworkMonitor by using one of its 3 constructors, the default port is 0.
 ``` csharp
 NetworkMonitor(IPAddress)
 NetworkMonitor(IPAddress, int)
