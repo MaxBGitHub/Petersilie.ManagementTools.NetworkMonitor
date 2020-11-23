@@ -42,7 +42,6 @@
   <ItemGroup>
     <Compile Include="Extensions.cs" />
     <Compile Include="ICMPHeader.cs" />
-    <Compile Include="ICMPTypeCodeEntry.cs" />
     <Compile Include="IHeader.cs" />
     <Compile Include="IIPHeader.cs" />
     <Compile Include="IPHeaderUtil.cs" />

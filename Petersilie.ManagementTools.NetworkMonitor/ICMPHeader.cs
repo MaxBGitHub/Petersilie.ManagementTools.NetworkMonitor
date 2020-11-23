@@ -31,7 +31,7 @@ namespace Petersilie.ManagementTools.NetworkMonitor
         /// Contains the description for the 
         /// specific combination of type and code.
         /// </summary>
-        public ICMPTypeCodeEntry TypeCodeDescription { get; }
+        public string TypeCodeDescription { get; }
         /// <summary>
         /// Bit 0-7. ICMP type, see <see cref="ICMPTypename"/>.
         /// </summary>

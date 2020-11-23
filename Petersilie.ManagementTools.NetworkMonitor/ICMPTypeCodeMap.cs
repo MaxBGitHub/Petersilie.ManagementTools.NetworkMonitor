@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace Petersilie.ManagementTools.NetworkMonitor
 {
     internal static class ICMPTypeCodeMap
@@ -12,12 +6,10 @@ namespace Petersilie.ManagementTools.NetworkMonitor
         private static NestedMap<int, int, string> _entries;
 
 
-        public static ICMPTypeCodeEntry GetEntry(int type, int code)
+        public static string GetEntry(int type, int code)
         {            
             var entry = _entries[type, code];
-            return new ICMPTypeCodeEntry(entry.Item1, 
-                                         entry.Item2, 
-                                         entry.Item3);
+            return entry.Item3;
         }
 
 
