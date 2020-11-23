@@ -47,9 +47,15 @@
     <Compile Include="IIPHeader.cs" />
     <Compile Include="IPHeaderUtil.cs" />
     <Compile Include="IPv4Header.cs" />
+    <Compile Include="NestedMap.cs" />
     <Compile Include="PacketEventArgs.cs" />
     <Compile Include="IPv6Header.cs" />
     <Compile Include="ICMPTypeCodeMap.cs" />
+    <Compile Include="strings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>strings.resx</DependentUpon>
+    </Compile>
     <Compile Include="TCPHeader.cs" />
     <Compile Include="UDPHeader.cs" />
     <Compile Include="MonitorExceptionEventArgs.cs" />
@@ -58,6 +64,12 @@
     <Compile Include="Enums.cs" />
     <Compile Include="SocketStateObject.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="strings.de.resx" />
+    <EmbeddedResource Include="strings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>strings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

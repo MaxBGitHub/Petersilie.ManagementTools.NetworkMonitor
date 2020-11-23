@@ -92,9 +92,6 @@ namespace Petersilie.ManagementTools.NetworkMonitor
             return stream.ToArray();
         }
 
-
-        private ICMPTypeCodeMap _tcMap = new ICMPTypeCodeMap();
-
         /// <summary>
         /// Initializes a new instance of a ICMPHeader object.
         /// </summary>
@@ -110,7 +107,7 @@ namespace Petersilie.ManagementTools.NetworkMonitor
                 Type = reader.ReadByte();
                 Code = reader.ReadByte();
                 Checksum = reader.ReadUInt16();
-                TypeCodeDescription = _tcMap[Type, Code];
+                TypeCodeDescription = ICMPTypeCodeMap.GetEntry(Type, Code);
 
                 int dataLength = (int)(packet.Length - mem.Position);
                 Data = reader.ReadBytes(dataLength);

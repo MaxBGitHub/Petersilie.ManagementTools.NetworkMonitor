@@ -1,0 +1,312 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ICMP_000_00" xml:space="preserve">
+    <value>Echo reply</value>
+  </data>
+  <data name="ICMP_001_00" xml:space="preserve">
+    <value>Reserved</value>
+  </data>
+  <data name="ICMP_002_00" xml:space="preserve">
+    <value>Reserved</value>
+  </data>
+  <data name="ICMP_003_00" xml:space="preserve">
+    <value>Destination network unreachable</value>
+  </data>
+  <data name="ICMP_003_01" xml:space="preserve">
+    <value>Destination host unreachable</value>
+  </data>
+  <data name="ICMP_003_02" xml:space="preserve">
+    <value>Destination protocol unreachable</value>
+  </data>
+  <data name="ICMP_003_03" xml:space="preserve">
+    <value>Destination port unreachable</value>
+  </data>
+  <data name="ICMP_003_04" xml:space="preserve">
+    <value>Fragmentation required, and DF flag set</value>
+  </data>
+  <data name="ICMP_003_05" xml:space="preserve">
+    <value>Source route failed</value>
+  </data>
+  <data name="ICMP_003_06" xml:space="preserve">
+    <value>Destination network unkown</value>
+  </data>
+  <data name="ICMP_003_07" xml:space="preserve">
+    <value>Destination host unkown</value>
+  </data>
+  <data name="ICMP_003_08" xml:space="preserve">
+    <value>Source host isolated</value>
+  </data>
+  <data name="ICMP_003_09" xml:space="preserve">
+    <value>Network administratively prohibited</value>
+  </data>
+  <data name="ICMP_003_10" xml:space="preserve">
+    <value>Host administratively prohibited</value>
+  </data>
+  <data name="ICMP_003_11" xml:space="preserve">
+    <value>Network unreachable for ToS</value>
+  </data>
+  <data name="ICMP_003_12" xml:space="preserve">
+    <value>Host unreachable for ToS</value>
+  </data>
+  <data name="ICMP_003_13" xml:space="preserve">
+    <value>Communication administratively prohibited</value>
+  </data>
+  <data name="ICMP_003_14" xml:space="preserve">
+    <value>Host Precedence Violation</value>
+  </data>
+  <data name="ICMP_003_15" xml:space="preserve">
+    <value>Precedence cutoff in effect</value>
+  </data>
+  <data name="ICMP_004_00" xml:space="preserve">
+    <value>Depreciated</value>
+  </data>
+  <data name="ICMP_005_00" xml:space="preserve">
+    <value>Redirect Datagram for Network</value>
+  </data>
+  <data name="ICMP_005_01" xml:space="preserve">
+    <value>Redirect Datagram for Host</value>
+  </data>
+  <data name="ICMP_005_02" xml:space="preserve">
+    <value>Redirect Datagram for the ToS and network</value>
+  </data>
+  <data name="ICMP_005_03" xml:space="preserve">
+    <value>Redirect Datagram for the ToS and host</value>
+  </data>
+  <data name="ICMP_006_00" xml:space="preserve">
+    <value>Depreciated</value>
+  </data>
+  <data name="ICMP_007_00" xml:space="preserve">
+    <value>Unassigned</value>
+  </data>
+  <data name="ICMP_008_00" xml:space="preserve">
+    <value>Echo request</value>
+  </data>
+  <data name="ICMP_009_00" xml:space="preserve">
+    <value>Router Advertisment</value>
+  </data>
+  <data name="ICMP_010_00" xml:space="preserve">
+    <value>Router discovery/selection/solicitation</value>
+  </data>
+  <data name="ICMP_011_00" xml:space="preserve">
+    <value>TTL expired in transit</value>
+  </data>
+  <data name="ICMP_011_01" xml:space="preserve">
+    <value>Fragment reassembly time exceeded</value>
+  </data>
+  <data name="ICMP_012_00" xml:space="preserve">
+    <value>Pointer indicates the error</value>
+  </data>
+  <data name="ICMP_012_01" xml:space="preserve">
+    <value>Missing a required option</value>
+  </data>
+  <data name="ICMP_012_02" xml:space="preserve">
+    <value>Bad length</value>
+  </data>
+  <data name="ICMP_013_00" xml:space="preserve">
+    <value>Timestamp</value>
+  </data>
+  <data name="ICMP_014_00" xml:space="preserve">
+    <value>Timestamp reply</value>
+  </data>
+  <data name="ICMP_015_00" xml:space="preserve">
+    <value>Information request</value>
+  </data>
+  <data name="ICMP_016_00" xml:space="preserve">
+    <value>Information reply</value>
+  </data>
+  <data name="ICMP_017_00" xml:space="preserve">
+    <value>Address mask request</value>
+  </data>
+  <data name="ICMP_018_00" xml:space="preserve">
+    <value>Address mask reply</value>
+  </data>
+  <data name="ICMP_019_00" xml:space="preserve">
+    <value>Reserved for security</value>
+  </data>
+  <data name="ICMP_030_00" xml:space="preserve">
+    <value>Information request</value>
+  </data>
+  <data name="ICMP_031_00" xml:space="preserve">
+    <value>Datagram conversion error</value>
+  </data>
+  <data name="ICMP_032_00" xml:space="preserve">
+    <value>Mobile host redirect</value>
+  </data>
+  <data name="ICMP_033_00" xml:space="preserve">
+    <value>Where-Are-You (originally meant for IPv6)</value>
+  </data>
+  <data name="ICMP_034_00" xml:space="preserve">
+    <value>Here-I-Am (originally meant for IPv6)</value>
+  </data>
+  <data name="ICMP_035_00" xml:space="preserve">
+    <value>Mobile registration request</value>
+  </data>
+  <data name="ICMP_036_00" xml:space="preserve">
+    <value>Mobile registration reply</value>
+  </data>
+  <data name="ICMP_037_00" xml:space="preserve">
+    <value>Domain name request</value>
+  </data>
+  <data name="ICMP_038_00" xml:space="preserve">
+    <value>Domain name reply</value>
+  </data>
+  <data name="ICMP_039_00" xml:space="preserve">
+    <value>SKIP algorithm discovery protocol, simple key-management for internet protocol</value>
+  </data>
+  <data name="ICMP_040_00" xml:space="preserve">
+    <value>Photuris, Security failures</value>
+  </data>
+  <data name="ICMP_041_00" xml:space="preserve">
+    <value>ICMP for experimental mobility protocol such as Seamoby</value>
+  </data>
+  <data name="ICMP_042_00" xml:space="preserve">
+    <value>Request extended echo (XPing)</value>
+  </data>
+  <data name="ICMP_043_00" xml:space="preserve">
+    <value>No error</value>
+  </data>
+  <data name="ICMP_043_01" xml:space="preserve">
+    <value>Malformed query</value>
+  </data>
+  <data name="ICMP_043_02" xml:space="preserve">
+    <value>No such interface</value>
+  </data>
+  <data name="ICMP_043_03" xml:space="preserve">
+    <value>No such table entry</value>
+  </data>
+  <data name="ICMP_043_04" xml:space="preserve">
+    <value>Multiple interfaces satisfy query</value>
+  </data>
+  <data name="ICMP_20To29" xml:space="preserve">
+    <value>Reserved for robustness experiment</value>
+  </data>
+  <data name="ICMP_253_00" xml:space="preserve">
+    <value>RFC3692-style Experiment 1 (RFC 4727)</value>
+  </data>
+  <data name="ICMP_254_00" xml:space="preserve">
+    <value>RFC3692-style Experiment 2 (RFC 4727)</value>
+  </data>
+  <data name="ICMP_255_00" xml:space="preserve">
+    <value>Reserved</value>
+  </data>
+  <data name="ICMP_44To252" xml:space="preserve">
+    <value>Reserved</value>
+  </data>
+</root>

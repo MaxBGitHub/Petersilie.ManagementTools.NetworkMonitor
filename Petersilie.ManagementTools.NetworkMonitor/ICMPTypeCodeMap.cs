@@ -1,147 +1,111 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Petersilie.ManagementTools.NetworkMonitor
 {
-    internal class ICMPTypeCodeMap : HashSet<ICMPTypeCodeEntry>
-    {
-        public ICMPTypeCodeEntry this[int type, int code]
-        {
-            get {
-                return this.Where(entry => entry.Type == type && entry.Code == code)
-                    .First();
-            }
+    internal static class ICMPTypeCodeMap
+    {                
+        private static NestedMap<int, int, string> _entries;
+
+
+        public static ICMPTypeCodeEntry GetEntry(int type, int code)
+        {            
+            var entry = _entries[type, code];
+            return new ICMPTypeCodeEntry(entry.Item1, 
+                                         entry.Item2, 
+                                         entry.Item3);
         }
 
 
-        public ICMPTypeCodeEntry[] this[int type]
+        private static void InitTypeCodeMap()
         {
-            get {
-                return this.Where(entry => entry.Type == type).ToArray();
-            }
-        }
+            _entries = new NestedMap<int, int, string>();
 
+            _entries.Add(0, 0, strings.ICMP_000_00);
 
-        private void InitTypeCodeMap()
-        {
-            this.Add(new ICMPTypeCodeEntry(0, 0, "Echo reply"));
-
-            this.Add(new ICMPTypeCodeEntry(1, 0, "Reserved"));
-            this.Add(new ICMPTypeCodeEntry(2, 0, "Reserved"));
-
-            this.Add(new ICMPTypeCodeEntry(3, 0, "Destination network unreachable"));
-            this.Add(new ICMPTypeCodeEntry(3, 1, "Destination host unreachable"));
-            this.Add(new ICMPTypeCodeEntry(3, 2, "Destination protocol unreachable"));
-            this.Add(new ICMPTypeCodeEntry(3, 3, "Destination port unreachable"));
-            this.Add(new ICMPTypeCodeEntry(3, 4, "Fragmentation required, and DF flag set"));
-            this.Add(new ICMPTypeCodeEntry(3, 5, "Source route failed"));
-            this.Add(new ICMPTypeCodeEntry(3, 6, "Destination network unkown"));
-            this.Add(new ICMPTypeCodeEntry(3, 7, "Destination host unkown"));
-            this.Add(new ICMPTypeCodeEntry(3, 8, "Source host isolated"));
-            this.Add(new ICMPTypeCodeEntry(3, 8, "Network administratively prohibited"));
-            this.Add(new ICMPTypeCodeEntry(3, 10, "Host administratively prohibited"));
-            this.Add(new ICMPTypeCodeEntry(3, 11, "Network unreachable for ToS"));
-            this.Add(new ICMPTypeCodeEntry(3, 12, "Host unreachable for ToS"));
-            this.Add(new ICMPTypeCodeEntry(3, 13, "Communication administratively prohibited"));
-            this.Add(new ICMPTypeCodeEntry(3, 14, "Host Precedence Violation"));
-            this.Add(new ICMPTypeCodeEntry(3, 15, "Precedence cutoff in effect"));
-
-            this.Add(new ICMPTypeCodeEntry(4, 0, "Depreciated"));
-
-            this.Add(new ICMPTypeCodeEntry(5, 0, "Redirect Datagram for Network"));
-            this.Add(new ICMPTypeCodeEntry(5, 1, "Redirect Datagram for Host"));
-            this.Add(new ICMPTypeCodeEntry(5, 2, "Redirect Datagram for the ToS & network"));
-            this.Add(new ICMPTypeCodeEntry(5, 3, "Redirect Datagram for the ToS & host"));
-
-            this.Add(new ICMPTypeCodeEntry(6, 0, "Depreciated"));
-
-            this.Add(new ICMPTypeCodeEntry(7, 0, "Unassigned"));
-
-            this.Add(new ICMPTypeCodeEntry(8, 0, "Echo request"));
-
-            this.Add(new ICMPTypeCodeEntry(9, 0, "Router Advertisment"));
-
-            this.Add(new ICMPTypeCodeEntry(10, 0, "Router discovery/selection/solicitation"));
-
-            this.Add(new ICMPTypeCodeEntry(11, 0, "TTL expired in transit"));
-            this.Add(new ICMPTypeCodeEntry(11, 1, "Fragment reassembly time exceeded"));
-
-            this.Add(new ICMPTypeCodeEntry(12, 0, "Pointer indicates the error"));
-            this.Add(new ICMPTypeCodeEntry(12, 1, "Missing a required option"));
-            this.Add(new ICMPTypeCodeEntry(12, 2, "Bad length"));
-
-            this.Add(new ICMPTypeCodeEntry(13, 0, "Timestamp"));
-
-            this.Add(new ICMPTypeCodeEntry(14, 0, "Timestamp reply"));
-
-            this.Add(new ICMPTypeCodeEntry(15, 0, "Information Request"));
-
-            this.Add(new ICMPTypeCodeEntry(16, 0, "Information Reply"));
-
-            this.Add(new ICMPTypeCodeEntry(17, 0, "Address Mask Request"));
-
-            this.Add(new ICMPTypeCodeEntry(18, 0, "Address Mask Reply"));
-
-            this.Add(new ICMPTypeCodeEntry(19, 0, "Reserved for security"));
-
-            this.Add(new ICMPTypeCodeEntry(20, 0, "Reserved for robustness experiment"));
-            this.Add(new ICMPTypeCodeEntry(21, 0, "Reserved for robustness experiment"));
-            this.Add(new ICMPTypeCodeEntry(22, 0, "Reserved for robustness experiment"));
-            this.Add(new ICMPTypeCodeEntry(23, 0, "Reserved for robustness experiment"));
-            this.Add(new ICMPTypeCodeEntry(24, 0, "Reserved for robustness experiment"));
-            this.Add(new ICMPTypeCodeEntry(25, 0, "Reserved for robustness experiment"));
-            this.Add(new ICMPTypeCodeEntry(26, 0, "Reserved for robustness experiment"));
-            this.Add(new ICMPTypeCodeEntry(27, 0, "Reserved for robustness experiment"));
-            this.Add(new ICMPTypeCodeEntry(28, 0, "Reserved for robustness experiment"));
-            this.Add(new ICMPTypeCodeEntry(29, 0, "Reserved for robustness experiment"));
-
-            this.Add(new ICMPTypeCodeEntry(30, 0, "Information Request"));
-
-            this.Add(new ICMPTypeCodeEntry(31, 0, "Datagram Conversion Error"));
-
-            this.Add(new ICMPTypeCodeEntry(32, 0, "Mobile Host Redirect"));
-
-            this.Add(new ICMPTypeCodeEntry(33, 0, "Where-Are-You (originally meant for IPv6)"));
-
-            this.Add(new ICMPTypeCodeEntry(34, 0, "Here-I-Am (originally meant for IPv6"));
-
-            this.Add(new ICMPTypeCodeEntry(35, 0, "Mobile Registration Request"));
-
-            this.Add(new ICMPTypeCodeEntry(36, 0, "Mobile Registration Reply"));
-
-            this.Add(new ICMPTypeCodeEntry(37, 0, "Domain Name Request"));
-
-            this.Add(new ICMPTypeCodeEntry(38, 0, "Domain Name Reply"));
-
-            this.Add(new ICMPTypeCodeEntry(39, 0, "SKIP Algorithm Discovery Protocol, Simple Key-Management for Internet Protocol"));
-
-            this.Add(new ICMPTypeCodeEntry(40, 0, "Photuris, Security failures"));
-
-            this.Add(new ICMPTypeCodeEntry(41, 0, "ICMP for experimental mobility protocol such as Seamoby"));
-
-            this.Add(new ICMPTypeCodeEntry(42, 0, "Request Extended Echo (XPing)"));
-
-            this.Add(new ICMPTypeCodeEntry(43, 0, "No Errror"));
-            this.Add(new ICMPTypeCodeEntry(43, 1, "Malformed Query"));
-            this.Add(new ICMPTypeCodeEntry(43, 2, "No Such Interface"));
-            this.Add(new ICMPTypeCodeEntry(43, 3, "No Such Table Entry"));
-            this.Add(new ICMPTypeCodeEntry(43, 4, "Multiple Interfaces Satisfy Query"));
+            _entries.Add(1, 0, strings.ICMP_001_00);
+            _entries.Add(2, 0, strings.ICMP_002_00);
+            _entries.Add(3, 0, strings.ICMP_003_00);
+            _entries.Add(3, 1, strings.ICMP_003_01);
+            _entries.Add(3, 2, strings.ICMP_003_02);
+            _entries.Add(3, 3, strings.ICMP_003_03);
+            _entries.Add(3, 4, strings.ICMP_003_04);
+            _entries.Add(3, 5, strings.ICMP_003_05);
+            _entries.Add(3, 6, strings.ICMP_003_06);
+            _entries.Add(3, 7, strings.ICMP_003_07);
+            _entries.Add(3, 8, strings.ICMP_003_08);
+            _entries.Add(3, 8, strings.ICMP_003_08);
+            _entries.Add(3, 10, strings.ICMP_003_10);
+            _entries.Add(3, 11, strings.ICMP_003_11);
+            _entries.Add(3, 12, strings.ICMP_003_12);
+            _entries.Add(3, 13, strings.ICMP_003_13);
+            _entries.Add(3, 14, strings.ICMP_003_14);
+            _entries.Add(3, 15, strings.ICMP_003_15);
+            _entries.Add(4, 0, strings.ICMP_004_00);
+            _entries.Add(5, 0, strings.ICMP_005_00);
+            _entries.Add(5, 1, strings.ICMP_005_01);
+            _entries.Add(5, 2, strings.ICMP_005_02);
+            _entries.Add(5, 3, strings.ICMP_005_03);
+            _entries.Add(6, 0, strings.ICMP_006_00);
+            _entries.Add(7, 0, strings.ICMP_007_00);
+            _entries.Add(8, 0, strings.ICMP_008_00);
+            _entries.Add(9, 0, strings.ICMP_009_00);
+            _entries.Add(10, 0, strings.ICMP_010_00);
+            _entries.Add(11, 0, strings.ICMP_011_00);
+            _entries.Add(11, 1, strings.ICMP_011_01);
+            _entries.Add(12, 0, strings.ICMP_012_00);
+            _entries.Add(12, 1, strings.ICMP_012_01);
+            _entries.Add(12, 2, strings.ICMP_012_02);
+            _entries.Add(13, 0, strings.ICMP_013_00);
+            _entries.Add(14, 0, strings.ICMP_014_00);
+            _entries.Add(15, 0, strings.ICMP_015_00);
+            _entries.Add(16, 0, strings.ICMP_016_00);
+            _entries.Add(17, 0, strings.ICMP_017_00);
+            _entries.Add(18, 0, strings.ICMP_018_00);
+            _entries.Add(19, 0, strings.ICMP_019_00);
+            _entries.Add(20, 0, strings.ICMP_20To29);
+            _entries.Add(21, 0, strings.ICMP_20To29);
+            _entries.Add(22, 0, strings.ICMP_20To29);
+            _entries.Add(23, 0, strings.ICMP_20To29);
+            _entries.Add(24, 0, strings.ICMP_20To29);
+            _entries.Add(25, 0, strings.ICMP_20To29);
+            _entries.Add(26, 0, strings.ICMP_20To29);
+            _entries.Add(27, 0, strings.ICMP_20To29);
+            _entries.Add(28, 0, strings.ICMP_20To29);
+            _entries.Add(29, 0, strings.ICMP_20To29);
+            _entries.Add(30, 0, strings.ICMP_030_00);
+            _entries.Add(31, 0, strings.ICMP_031_00);
+            _entries.Add(32, 0, strings.ICMP_032_00);
+            _entries.Add(33, 0, strings.ICMP_033_00);
+            _entries.Add(34, 0, strings.ICMP_034_00);
+            _entries.Add(35, 0, strings.ICMP_035_00);
+            _entries.Add(36, 0, strings.ICMP_036_00);
+            _entries.Add(37, 0, strings.ICMP_037_00);
+            _entries.Add(38, 0, strings.ICMP_038_00);
+            _entries.Add(39, 0, strings.ICMP_039_00);
+            _entries.Add(40, 0, strings.ICMP_040_00);
+            _entries.Add(41, 0, strings.ICMP_041_00);
+            _entries.Add(42, 0, strings.ICMP_042_00);
+            _entries.Add(43, 0, strings.ICMP_043_00);
+            _entries.Add(43, 1, strings.ICMP_043_01);
+            _entries.Add(43, 2, strings.ICMP_043_02);
+            _entries.Add(43, 3, strings.ICMP_043_03);
+            _entries.Add(43, 4, strings.ICMP_043_04);
+            _entries.Add(253, 0, strings.ICMP_253_00);
+            _entries.Add(254, 0, strings.ICMP_254_00);
+            _entries.Add(255, 0, strings.ICMP_255_00);
 
             for (int i=44; i<=252; i++) {
-                this.Add(new ICMPTypeCodeEntry(i, 0, "Reserved"));
+                _entries.Add(i, 0, strings.ICMP_44To252);
             }
-
-            this.Add(new ICMPTypeCodeEntry(253, 0, "RFC3692-style Experiment 1 (RFC 4727)"));
-            this.Add(new ICMPTypeCodeEntry(254, 0, "RFC3692-style Experiment 2 (RFC 4727)"));
-            this.Add(new ICMPTypeCodeEntry(255, 0, "Reserved"));
         }
 
 
-
-        public ICMPTypeCodeMap()
+        static ICMPTypeCodeMap()
         {
             InitTypeCodeMap();
         }
