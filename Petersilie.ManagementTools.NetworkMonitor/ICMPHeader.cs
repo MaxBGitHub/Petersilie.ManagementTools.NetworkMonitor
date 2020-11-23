@@ -96,7 +96,7 @@ namespace Petersilie.ManagementTools.NetworkMonitor
         /// Initializes a new instance of a ICMPHeader object.
         /// </summary>
         /// <param name="packet">Array containing ICMP 
-        /// data that can be parsed and reconstructed.</param>
+        /// data that can be parsed and reconstructed</param>
         public ICMPHeader(byte[] packet)
         {
             Packet = packet;

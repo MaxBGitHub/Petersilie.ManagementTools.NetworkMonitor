@@ -12,7 +12,7 @@ namespace Petersilie.ManagementTools.NetworkMonitor
         /// Gets the specific Internet Protocol Version from the 
         /// raw data stream.
         /// </summary>
-        /// <param name="packet">Raw packet data.</param>
+        /// <param name="packet">Raw packet data</param>
         /// <returns></returns>
         public static IPVersion GetVersion(byte[] packet)
         {
@@ -45,7 +45,7 @@ namespace Petersilie.ManagementTools.NetworkMonitor
         /// If it is not an Internet Protocol packet than the 
         /// function returns null.
         /// </summary>
-        /// <param name="packet">Raw IP packet.</param>
+        /// <param name="packet">Raw IP packet</param>
         /// <returns></returns>
         public static IIPHeader Parse(byte[] packet)
         {

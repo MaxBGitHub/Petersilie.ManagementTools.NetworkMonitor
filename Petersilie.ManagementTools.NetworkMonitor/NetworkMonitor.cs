@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
@@ -9,25 +10,12 @@ namespace Petersilie.ManagementTools.NetworkMonitor
 {    
     public class NetworkMonitor : IDisposable
     {
-        /// <summary>
-        /// Runtime duration of the NetworkMonitor.
-        /// </summary>
-        public TimeSpan UpTime
-        {
-            get
-            {
-                if (_continue) {
-                    return DateTime.Now - _startedAt;
-                } else {
-                    return _endedAt - _startedAt;
-                }
-            }
-        }
+        public const int DEFAULT_BUFFERSIZE = 0x1000;
 
-        // Start time of the NetworkMonitor.
-        private DateTime _startedAt;
-        // Time the NetworkMonitor ended.
-        private DateTime _endedAt;
+        /// <summary>
+        /// Amount of bytes that the socket can receive.
+        /// </summary>
+        public int BufferSize { get; set; } = DEFAULT_BUFFERSIZE;
 
         /// <summary>
         /// Socket bound IP address.
@@ -40,11 +28,11 @@ namespace Petersilie.ManagementTools.NetworkMonitor
         public int Port { get; }
 
 
-        private event EventHandler<MonitorExceptionEventArgs> onError;
+        private event EventHandler<PacketErrorEventArgs> onError;
         /// <summary>
         /// Occurs whenever the monitor runs into an exception or error.
         /// </summary>
-        public event EventHandler<MonitorExceptionEventArgs> OnError
+        public event EventHandler<PacketErrorEventArgs> OnError
         {
             add {
                 onError += value;
@@ -54,7 +42,7 @@ namespace Petersilie.ManagementTools.NetworkMonitor
             }
         }
 
-        protected virtual void OnErrorInternal(MonitorExceptionEventArgs e)
+        protected virtual void OnErrorInternal(PacketErrorEventArgs e)
         {
             onError?.Invoke(this, e);
         }
@@ -158,9 +146,6 @@ namespace Petersilie.ManagementTools.NetworkMonitor
                 // Get socket from SocketStateObject.
                 Socket socket = monObj.Socket;
                 if (null == socket) {
-                    socket.Close();
-                    socket.Dispose();
-                    socket = null;
                     return;
                 } /* Check if received Socket is null. */
 
@@ -175,7 +160,7 @@ namespace Petersilie.ManagementTools.NetworkMonitor
 
                 if ( 1 > nReceived ) {
                     if (SocketError.Success == err) {
-                        // Assing SocketError.NoData.
+                        // Assign SocketError.NoData.
                         err = SocketError.NoData;
                     } /* Check if we ran into any errors. */
 
@@ -193,8 +178,7 @@ namespace Petersilie.ManagementTools.NetworkMonitor
                                      bytesReceived, 
                                      0, 
                                      nReceived);
-                    // Parse bytes into IP header.
-                    var header = IPHeaderUtil.Parse(bytesReceived);                    
+
                     /* Create event args with header object,
                     ** IP address, port and no error. */
                     ipArgs = new PacketEventArgs(bytesReceived,
@@ -205,17 +189,17 @@ namespace Petersilie.ManagementTools.NetworkMonitor
                 // Raise event.
                 OnPacketReceived(ipArgs);
                 // Create new SocketStateObject instance.
-                monObj = new SocketStateObject(socket);
+                monObj = new SocketStateObject(socket, BufferSize);
                 // Continue receiving raw packets.
                 socket.BeginReceive(monObj.Data, 0,
-                                    SocketStateObject.BUFFER_SIZE,
+                                    BufferSize,
                                     SocketFlags.None,
                                     new AsyncCallback(OnReceive),
                                     monObj);
             }
             catch (Exception ex) {                
                 // Create new error event args.
-                var errArgs = new MonitorExceptionEventArgs(
+                var errArgs = new PacketErrorEventArgs(
                     ex, _socket, IPAddress, Port);
                 // Raise error event.
                 OnErrorInternal(errArgs);
@@ -225,24 +209,43 @@ namespace Petersilie.ManagementTools.NetworkMonitor
 
         public void Begin()
         {
-            _startedAt = DateTime.Now;
             try
             {
+                // Init socket for raw, IP based network listening.
                 _socket = new Socket(AddressFamily.InterNetwork,
                                      SocketType.Raw,
                                      ProtocolType.IP);
-
+                
+                // Bind socket to IP and port.
                 _socket.Bind(new IPEndPoint(IPAddress, Port));
 
+                /* Configure socket to listen on all IP packets
+                ** and include headers. */
                 _socket.SetSocketOption(SocketOptionLevel.IP,
                                         SocketOptionName.HeaderIncluded,
                                         true);
 
-                SocketStateObject monObj = new SocketStateObject(_socket);
-                _socket.ReceiveBufferSize = SocketStateObject.BUFFER_SIZE;
-                _socket.IOControl(IOControlCode.ReceiveAll, RCVALL_ON, RCVALL_ON);
-                _socket.BeginReceive(monObj.Data, 0,
-                                    SocketStateObject.BUFFER_SIZE,
+                // State object for async callback.
+                SocketStateObject monObj = new SocketStateObject(_socket, 
+                                                                BufferSize);
+                
+                // Set size of receive data buffer of socket.
+                _socket.ReceiveBufferSize = BufferSize;
+                
+                /* Configure IO control to receive all incoming
+                ** aswell as all out going data. */
+                _socket.IOControl(IOControlCode.ReceiveAll,
+                                RCVALL_ON, 
+                                RCVALL_ON);
+
+                /* Start receiving data from clients.
+                ** Store connection data in monObj.Data.
+                ** Set data offset to 0 and use user defined
+                ** buffer size. Do not pass any socket flags.
+                ** Assign async callback and pass monObj as
+                ** State object of the connection. */
+                _socket.BeginReceive(monObj.Data,
+                                    0, BufferSize,
                                     SocketFlags.None,
                                     new AsyncCallback(OnReceive),
                                     monObj);
@@ -254,49 +257,75 @@ namespace Petersilie.ManagementTools.NetworkMonitor
         }
 
 
+        /// <summary>
+        /// Stops the NetworkMonitor from receiving any data.
+        /// </summary>
         public void Stop()
         {
-            _endedAt = DateTime.Now;
             _continue = false;
             TryRelease(_socket);
         }
 
 
+        /* Returns an array of valid network interfaces.
+        ** Used to create a NetworkMonitor object for 
+        ** all up and running network interfaces.
+        ** Valid interfaces are those that are not a
+        ** loopback or tunnel interface/adapter and 
+        ** are up and running and not a virtual ethernet
+        ** interface/adapter. */
         private static NetworkInterface[] GetInterfaces()
         {
-            NetworkInterface[] interfaces = NetworkInterface.GetAllNetworkInterfaces();
+            // Unallowed interface types.
+            var invalidInterfaces = new NetworkInterfaceType[2] {
+                NetworkInterfaceType.Loopback,
+                NetworkInterfaceType.Tunnel
+            };
 
+            // Store all interfaces.
+            var interfaces = NetworkInterface.GetAllNetworkInterfaces();
+            // Stores all valid interfaces.
             var validInterfaces = new List<NetworkInterface>();
-            foreach (var netInt in interfaces)
-            {
-                bool isLoopBack = NetworkInterfaceType.Loopback == netInt.NetworkInterfaceType;
-                bool isTunnel = NetworkInterfaceType.Tunnel == netInt.NetworkInterfaceType;
-                bool isUp = OperationalStatus.Up == netInt.OperationalStatus;
-                bool isVirtualEth = netInt.Name.StartsWith("vEthernet");
-
-                if (!isLoopBack && !isTunnel && isUp && !isVirtualEth) {
-                    validInterfaces.Add(netInt);
-                }
-            }
+            foreach (var intf in interfaces) {
+                if (!(invalidInterfaces.Contains(intf.NetworkInterfaceType))) {
+                    if (OperationalStatus.Up == intf.OperationalStatus 
+                        && !(intf.Name.StartsWith("vEthernet")))
+                    {
+                        validInterfaces.Add(intf);
+                    } /* Check if running and not virtual ethernet. */
+                } /* Check for valid interface type. */
+            } /* Loop through available interfaces. */
             return validInterfaces.ToArray();
         }
 
 
+        /// <summary>
+        /// Creates a NetworkMonitor instance for each 
+        /// valid network interface.
+        /// </summary>
+        /// <returns>Returns an array of NetworkMonitor instances.</returns>
         public static NetworkMonitor[] BindInterfaces()
         {
+            // Get all up and running interfaces.
             var validInterfaces = GetInterfaces();
+            // List for storing NetworkMonitor objects.
             var monitors = new List<NetworkMonitor>();
+
             foreach (var netInterface in validInterfaces) {
                 var ipConfig = netInterface.GetIPProperties();
                 foreach (var uni in ipConfig.UnicastAddresses) {
-                    if (uni.Address.AddressFamily == AddressFamily.InterNetwork) {
+                    if (uni.Address.AddressFamily 
+                        == AddressFamily.InterNetwork)
+                    {
                         var mon = new NetworkMonitor(uni.Address);
                         monitors.Add(mon);
-                    }
-                }
-            }
+                    } /* Check if IPv4. */
+                } /* Loop through unicast addresses. */
+            } /* Loop through all valid interfaces. */
+
             return monitors.ToArray();
         }
+
 
 
         public NetworkMonitor(IPAddress target)
@@ -324,7 +353,6 @@ namespace Petersilie.ManagementTools.NetworkMonitor
         public void Dispose() { Dispose(true); }
         private void Dispose(bool disposing)
         {
-            _endedAt = DateTime.Now;
             if (disposing) {
                 GC.SuppressFinalize(this);
             }

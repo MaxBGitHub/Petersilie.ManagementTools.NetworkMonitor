@@ -10,7 +10,7 @@ namespace Petersilie.ManagementTools.NetworkMonitor
         /// Gets the low part nibble of a byte.
         /// A nibble is half a byte e.g. 4-Bit.
         /// </summary>
-        /// <param name="b">Byte to get nibble from.</param>
+        /// <param name="b">Byte to get nibble from</param>
         /// <returns></returns>
         public static byte LowNibble(this byte b) {
             return (byte)(b & 0x0f);
@@ -28,7 +28,7 @@ namespace Petersilie.ManagementTools.NetworkMonitor
         /// Gets the high part nibble of a byte.
         /// A nibble is half a byte e.g. 4-Bit.
         /// </summary>
-        /// <param name="b">Byte to get nibble from.</param>
+        /// <param name="b">Byte to get nibble from</param>
         /// <returns></returns>
         public static byte HighNibble(this byte b) {
             return (byte)((b >> 4) & 0x0f);
@@ -41,7 +41,7 @@ namespace Petersilie.ManagementTools.NetworkMonitor
         /// <para>High nibble = 0100 (4)</para>
         /// <para>Low nibble = 0101 (5)</para>
         /// </summary>
-        /// <param name="highNibble">High nibble.</param>
+        /// <param name="highNibble">High nibble</param>
         /// <param name="lowNibble">Low nibble</param>
         /// <returns>Returns a byte consisting of both nibbles.</returns>
         public static byte AddLowNibble(this byte highNibble, byte lowNibble) {
@@ -57,7 +57,7 @@ namespace Petersilie.ManagementTools.NetworkMonitor
         /// <para>Low nibble = 0101 (5)</para>
         /// </summary>        
         /// <param name="lowNibble">Low nibble</param>
-        /// <param name="highNibble">High nibble.</param>
+        /// <param name="highNibble">High nibble</param>
         /// <returns>Returns a byte consisting of both nibbles.</returns>
         public static byte AddHighNibble(this byte lowNibble, byte highNibble) {
             return (byte)((highNibble & 0xf) << 4 | lowNibble);
@@ -67,9 +67,9 @@ namespace Petersilie.ManagementTools.NetworkMonitor
         /// <summary>
         /// Sets the Bit at the specified position to 0 or 1.
         /// </summary>
-        /// <param name="b">The byte which Bit gets set.</param>
-        /// <param name="bitValue">Boolean representing a Bit value.</param>
-        /// <param name="pos">Zero based index of Bit.</param>
+        /// <param name="b">The byte which Bit gets set</param>
+        /// <param name="bitValue">Boolean representing a Bit value</param>
+        /// <param name="pos">Zero based index of Bit</param>
         /// <returns>Returns the modified byte.</returns>
         public static byte SetBit(this byte b, bool bitValue, int index)
         {
@@ -87,10 +87,10 @@ namespace Petersilie.ManagementTools.NetworkMonitor
         /// Sets all bits from the specified starting position to the 
         /// specified inclusion position to 1 or 0.
         /// </summary>
-        /// <param name="b">The byte which bits get to set.</param>
-        /// <param name="bitValue">Boolean representing a Bit value.</param>
-        /// <param name="startIndex">Zero based start index (from inclusive).</param>
-        /// <param name="endIndex">Zero based end index (to inclusive).</param>
+        /// <param name="b">The byte which bits get to set</param>
+        /// <param name="bitValue">Boolean representing a Bit value</param>
+        /// <param name="startIndex">Zero based start index (from inclusive)</param>
+        /// <param name="endIndex">Zero based end index (to inclusive)</param>
         /// <returns>Returns the modified byte.</returns>
         public static byte SetBits(this byte b, bool bitValue, int startIndex, int endIndex)
         {
@@ -106,8 +106,8 @@ namespace Petersilie.ManagementTools.NetworkMonitor
         /// <summary>
         /// Gets the Bit at the specified index.
         /// </summary>
-        /// <param name="b">The byte to get the Bit from.</param>
-        /// <param name="index">Zero based index of Bit to retreive.</param>
+        /// <param name="b">The byte to get the Bit from</param>
+        /// <param name="index">Zero based index of Bit to retreive</param>
         /// <returns>Returns a single Bit from a byte.</returns>
         public static bool GetBit(this byte b, int index) {
             return (b & (1 << index)) != 0;
@@ -117,7 +117,7 @@ namespace Petersilie.ManagementTools.NetworkMonitor
         /// <summary>
         /// Gets each Bit of the byte and stores in a byte array.
         /// </summary>
-        /// <param name="b">The byte to get the bits from.</param>
+        /// <param name="b">The byte to get the bits from</param>
         /// <returns>Returns an array containing the bits of the byte</returns>
         public static bool[] GetBits(this byte b)
         {
@@ -132,9 +132,9 @@ namespace Petersilie.ManagementTools.NetworkMonitor
         /// <summary>
         /// Gets each Bit of the byte within the specified range.
         /// </summary>
-        /// <param name="b">The byte to get the bits from.</param>
-        /// <param name="from">Zero based start index.</param>
-        /// <param name="to">Zero based end index.</param>
+        /// <param name="b">The byte to get the bits from</param>
+        /// <param name="from">Zero based start index</param>
+        /// <param name="to">Zero based end index</param>
         /// <returns></returns>
         public static bool[] GetBits(this byte b, int from, int to)
         {
@@ -161,7 +161,7 @@ namespace Petersilie.ManagementTools.NetworkMonitor
         /// <summary>
         /// Creates a new array that contains the new bits aswell.
         /// </summary>
-        /// <param name="src">Array to which to add the bits.</param>
+        /// <param name="src">Array to which to add the bits</param>
         /// <param name="b">The byte to get the bits from</param>
         /// <returns></returns>
         public static bool[] AddBits(this bool[] src, byte b)
@@ -178,8 +178,8 @@ namespace Petersilie.ManagementTools.NetworkMonitor
         /// <summary>
         /// Creates a new array that contains the new bits aswell.
         /// </summary>
-        /// <param name="src">Array to which to add the bits.</param>
-        /// <param name="bits">An array of bits which are added.</param>
+        /// <param name="src">Array to which to add the bits</param>
+        /// <param name="bits">An array of bits which are added</param>
         /// <returns></returns>
         public static bool[] AddBits(this bool[] src, bool[] bits)
         {

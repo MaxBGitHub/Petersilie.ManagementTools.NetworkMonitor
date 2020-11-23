@@ -2,17 +2,17 @@
 
 namespace Petersilie.ManagementTools.NetworkMonitor
 {
-    public class SocketStateObject
+    internal class SocketStateObject
     {
-        public const int BUFFER_SIZE = 0x4000;
+        public Socket   Socket;     // Socket of connection.
+        public byte[]   Data;       // Empty or filled data buffer.
+        public int      BufferSize; // Initial size of data buffer.
 
-        public Socket Socket;
-        public byte[] Data;        
-
-        public SocketStateObject(Socket s)
+        public SocketStateObject(Socket socket, int bufferSize)
         {
-            Socket = s;
-            Data = new byte[BUFFER_SIZE];
+            Socket      = socket;
+            Data        = new byte[bufferSize];
+            BufferSize  = bufferSize;
         }
     }
 }
