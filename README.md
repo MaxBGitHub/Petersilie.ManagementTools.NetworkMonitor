@@ -51,13 +51,13 @@ Simply call the NetworkMonitor.Stop() method or dispose your the NetworkMonitor 
 
 
 ### Parsing a packet
-The project contains 5 predefined headers.
+The project contains 5 predefined headers:
 ```csharp
-Petersilie.ManagementTools.NetworkMonitor.IPv4Header
-Petersilie.ManagementTools.NetworkMonitor.IPv6Header
-Petersilie.ManagementTools.NetworkMonitor.UDPHeader
-Petersilie.ManagementTools.NetworkMonitor.TCPHeader
-Petersilie.ManagementTools.NetworkMonitor.ICMPHeader
+IPv4Header
+IPv6Header
+UDPHeader
+TCPHeader
+ICMPHeader
 ```
 
 #### Parsing a IPv4 header
