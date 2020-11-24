@@ -31,7 +31,7 @@ namespace Petersilie.ManagementTools.NetworkMonitor
         /// </summary>
         public byte[] Packet { get; }
         /// <summary>
-        /// <see cref="Protocol.IP"/>
+        /// Bits 72-79. Next protocol within data payload.
         /// </summary>
         public Protocol Protocol { get; } = Protocol.IP;
         /// <summary>
@@ -104,14 +104,14 @@ namespace Petersilie.ManagementTools.NetworkMonitor
         /// </summary>
         public ushort HeaderChecksum { get; }
         /// <summary>
-        /// Bits 128-?. Possible Options are:
+        /// Bits 160-?. Possible Options are:
         /// <para>Strict Routing: Option contains whole path 
         /// that packet needs to go.</para>
         /// <para>Free Routing: Option contains list of routers
         /// that the packet is not allowed to miss.</para>
         /// <para>Record Router: Records whole route.</para>
         /// <para>Time Stamp: Timestamp.</para>
-        /// <para>Security: Defines </para>
+        /// <para>Security: Defines how secret packet is.</para>
         /// </summary>
         public byte[] OptionsAndPadding { get; } = new byte[0];
         /// <summary>
@@ -128,11 +128,11 @@ namespace Petersilie.ManagementTools.NetworkMonitor
             }
         }
         /// <summary>
-        /// Address of packet sender.
+        /// Bits 96-127. Address of packet sender.
         /// </summary>
         public IPAddress SourceAddress { get; }
         /// <summary>
-        /// Address of packet receiver.
+        /// Bits 128-159. Address of packet receiver.
         /// </summary>
         public IPAddress DestinationAddress { get; }
 
